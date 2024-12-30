@@ -1,19 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import TopNavBar from './TopNavBar';
-import DataGrid from './DataGrid';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import TopNavBar from "./TopNavBar";
+import DataGrid from "./DataGrid";
+import reportWebVitals from "./reportWebVitals";
+import { FirebaseProvider } from "./FirebaseContext";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-        <TopNavBar/>
-        <App />
-        <DataGrid/>
-
-
+    <FirebaseProvider>
+      <TopNavBar />
+      <App />
+      <DataGrid />
+    </FirebaseProvider>
   </React.StrictMode>
 );
 
