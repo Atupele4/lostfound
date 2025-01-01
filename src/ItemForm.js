@@ -64,6 +64,7 @@ function ItemForm({ show, handleClose }) {
     tags: [],
     location: "", // Location tag field
     files: [], // Array of files to upload
+    Comments: [], // Array of files to upload
   });
   const [errors, setErrors] = useState({});
 

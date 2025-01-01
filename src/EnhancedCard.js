@@ -1,12 +1,16 @@
 import React, { useState } from "react";
-import { Card, Button, Form,Modal } from "react-bootstrap";
+import { Card, Button, Modal } from "react-bootstrap";
+import CommentComponent from "./CommentComponent";
+import Comments from "./Comments";
 
-const EnhancedCard = ({ item, index, locationColors }) => {
-  const [comments, setComments] = useState("");
+const EnhancedCard = ({ item, index, locationColors, incidentId }) => {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [rating, setRating] = useState(null); // 'up' or 'down'
   const [showModal, setShowModal] = useState(false);
   const [modalImage, setModalImage] = useState(null);
+  const handleCommentSubmit = (comment) => {
+    console.log("Comment Submitted:", comment);
+  };
 
   const handleImageClick = (image) => {
     setModalImage(image);
@@ -28,64 +32,70 @@ const EnhancedCard = ({ item, index, locationColors }) => {
     setRating(value);
   };
 
-  console.log(item.imagePaths);
-
   return (
     <Card
       key={item.id}
       style={{ width: "70%", margin: "0 auto" }} // Set width and center the card
       className={`shadow-sm ${locationColors[item.location] || "border-light"}`}
     >
-     <div className="d-flex flex-wrap">
-      {(item.imagePaths?.length > 0 || uploadedImages.length > 0) && (
-        <>
-          {item.imagePaths.map((image, imageIndex) => (
-            <Card
-              key={`original-${imageIndex}`}
-              style={{ width: "200px", margin: "10px" }}
-              className="shadow-sm"
-              onClick={() => handleImageClick(image)} // On click, show the modal
-            >
-              <Card.Img
-                variant="top"
-                src={image}
-                alt={`Item ${index + 1} - Image ${imageIndex + 1}`}
-                style={{ height: "200px", width: "200px", objectFit: "cover" }}
-              />
-            </Card>
-          ))}
-          {uploadedImages.map((image, imageIndex) => (
-            <Card
-              key={`uploaded-${imageIndex}`}
-              style={{ width: "200px", margin: "10px" }}
-              className="shadow-sm"
-              onClick={() => handleImageClick(image)} // On click, show the modal
-            >
-              <Card.Img
-                variant="top"
-                src={image}
-                alt={`Uploaded Image ${imageIndex + 1}`}
-                style={{ height: "200px", width: "200px", objectFit: "cover" }}
-              />
-            </Card>
-          ))}
-        </>
-      )}
+      <div className="d-flex flex-wrap">
+        {(item.imagePaths?.length > 0 || uploadedImages.length > 0) && (
+          <>
+            {item.imagePaths.map((image, imageIndex) => (
+              <Card
+                key={`original-${imageIndex}`}
+                style={{ width: "200px", margin: "10px" }}
+                className="shadow-sm"
+                onClick={() => handleImageClick(image)} // On click, show the modal
+              >
+                <Card.Img
+                  variant="top"
+                  src={image}
+                  alt={`Item ${index + 1} - Image ${imageIndex + 1}`}
+                  style={{
+                    height: "200px",
+                    width: "200px",
+                    objectFit: "cover",
+                  }}
+                />
+              </Card>
+            ))}
+            {uploadedImages.map((image, imageIndex) => (
+              <Card
+                key={`uploaded-${imageIndex}`}
+                style={{ width: "200px", margin: "10px" }}
+                className="shadow-sm"
+                onClick={() => handleImageClick(image)} // On click, show the modal
+              >
+                <Card.Img
+                  variant="top"
+                  src={image}
+                  alt={`Uploaded Image ${imageIndex + 1}`}
+                  style={{
+                    height: "200px",
+                    width: "200px",
+                    objectFit: "cover",
+                  }}
+                />
+              </Card>
+            ))}
+          </>
+        )}
 
-      {/* Modal to display large image */}
-      <Modal show={showModal} onHide={handleCloseModal} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Image</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <img
-            src={modalImage}
-            alt="Large view"
-            style={{ width: "100%", height: "auto" }} // Responsive and large image
-          />
-        </Modal.Body>
-      </Modal>
-    </div>
+        {/* Modal to display large image */}
+        <Modal show={showModal} onHide={handleCloseModal} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Image</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <img
+              src={modalImage}
+              alt="Large view"
+              style={{ width: "100%", height: "auto" }} // Responsive and large image
+            />
+          </Modal.Body>
+        </Modal>
+      </div>
       <Card.Body>
         <Card.Title>
           #{index + 1}: {item.tags?.length > 0 ? item.tags.join(", ") : "N/A"}
@@ -119,33 +129,20 @@ const EnhancedCard = ({ item, index, locationColors }) => {
           </Button>
         </div>
 
-        <Card style={{ width: "100%" }} className="mt-3">
-          <Card.Body>
-            {/* Comments Section */}
-            <Form.Group controlId={`comments-${item.id}`}>
-              <Form.Label>Add Your Comments:</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                value={comments}
-                onChange={(e) => setComments(e.target.value)}
-                placeholder="Write your comment here..."
-              />
-            </Form.Group>
+        <div>
+          <h3>Item Comments</h3>
+          <CommentComponent
+            incidentId={incidentId}
+            onCommentSubmit={handleCommentSubmit}
+            onImageUpload={handleImageUpload}
+          />
+        </div>
 
-            {/* Image Upload */}
-            <Form.Group controlId={`imageUpload-${item.id}`} className="mt-3">
-              <Form.Label>Upload Additional Images:</Form.Label>
-              <Form.Control type="file" multiple onChange={handleImageUpload} />
-            </Form.Group>
-          </Card.Body>
-        </Card>
+        <div>
+          <Comments incidentIds={item.Comments} />
+        </div>
       </Card.Body>
     </Card>
-
-
-
-
   );
 };
 

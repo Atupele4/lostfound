@@ -44,6 +44,7 @@ const Incident = () => {
       {items.map((item, index) => (
         <EnhancedCard
           key={item.id}
+          incidentId={incidentId}
           item={item}
           index={index}
           locationColors={locationColors}
