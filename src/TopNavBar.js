@@ -2,9 +2,9 @@ import Container from "react-bootstrap/Container";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
-
 import { useState } from "react";
 import ItemForm from "./ItemForm";
+import { NavLink } from 'react-router-dom';
 
 function TopNavBar() {
   const [show, setShow] = useState(false);
@@ -15,27 +15,31 @@ function TopNavBar() {
     <>
       <Navbar expand="lg" className="bg-body-tertiary">
         <Container>
-          <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
+          <Navbar.Brand as={NavLink} to="/">LostFound</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link href="#home">Home</Nav.Link>
               <Nav.Link href="#link">Link</Nav.Link>
               <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                 <NavDropdown.Item href="#action/3.1" onClick={handleShow}>
                   Action
                 </NavDropdown.Item>
                 <NavDropdown.Item href="#action/3.2">
-                  Another action
+                  <i className="bi bi-info-circle"></i> About Us
                 </NavDropdown.Item>
                 <NavDropdown.Item href="#action/3.3">
-                  Something
+                  <i className="bi bi-envelope"></i> Contact
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item href="#action/3.4">
-                  Separated link
+                  <i className="bi bi-box-arrow-right"></i> Logout
                 </NavDropdown.Item>
               </NavDropdown>
+            </Nav>
+            <Nav className="ms-auto">
+              <Nav.Link href="#login" className="btn btn-primary text-white">
+                <i className="bi bi-person"></i> Login
+              </Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>

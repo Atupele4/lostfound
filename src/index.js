@@ -3,22 +3,40 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import TopNavBar from "./TopNavBar";
-import DataGrid from "./DataGrid";
-import reportWebVitals from "./reportWebVitals";
+import Incident from "./Incident";
+import { BrowserRouter, Routes, Route } from "react-router";
 import { FirebaseProvider } from "./FirebaseContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <FirebaseProvider>
+  <BrowserRouter>
+    <React.StrictMode>
+      <FirebaseProvider>
       <TopNavBar />
-      <App />
-      <DataGrid />
-    </FirebaseProvider>
-  </React.StrictMode>
+        {/* <Routes>
+          <Route path="/" element={<App />} />
+        </Routes> */}
+        <Routes>
+          <Route index element={<App />} />
+          <Route path="incident/:incidentId" element={<Incident incidentId={3} />} />
+
+          {/* <Route element={<AuthLayout />}>
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+          </Route>
+
+          <Route path="concerts">
+            <Route index element={<ConcertsHome />} />
+            <Route path=":city" element={<City />} />
+            <Route path="trending" element={<Trending />} />
+          </Route> */}
+        </Routes>
+      </FirebaseProvider>
+    </React.StrictMode>
+  </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+// reportWebVitals();
