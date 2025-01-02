@@ -41,11 +41,15 @@ const Incident = () => {
 
   return (
     <div className="d-flex flex-wrap">
+      {items.map((item, index) => (
         <EnhancedCard
+          key={item.id}
           incidentId={incidentId}
-          item={items}
+          item={item}
+          index={index}
           locationColors={locationColors}
         />
+      ))}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Modal, Button, Form, Badge } from "react-bootstrap";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, updateDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getAuth } from "firebase/auth"; // Import Firebase Auth
 import { useFirebase } from "./FirebaseContext";
@@ -65,7 +65,7 @@ function ItemForm({ show, handleClose }) {
     tags: [],
     location: "", // Location tag field
     files: [], // Array of files to upload
-    Comments: [], // Array of files to upload
+    comments: [], // Array of files to upload
   });
   const [errors, setErrors] = useState({});
 
@@ -165,8 +165,8 @@ function ItemForm({ show, handleClose }) {
           fileUrls.push(fileUrl); // Add URL to the array
         }
 
-        // Update Firestore document with imagePaths
-        await addDoc(collection(db, "Items"), {
+        // Update Firestore document with imagePaths using the document ID
+        await updateDoc(docRef, {
           imagePaths: fileUrls,
         });
 
