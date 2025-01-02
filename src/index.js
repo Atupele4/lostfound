@@ -6,6 +6,9 @@ import TopNavBar from "./TopNavBar";
 import Incident from "./Incident";
 import { BrowserRouter, Routes, Route } from "react-router";
 import { FirebaseProvider } from "./FirebaseContext";
+import UserProfile from "./myprofile/UserProfile";
+import Signup from "./myprofile/Signup ";
+import Login from "./myprofile/Login";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -19,6 +22,9 @@ root.render(
         <Routes>
           <Route index element={<App />} />
           <Route path="incident/:incidentId" element={<Incident incidentId={3} />} />
+          <Route path="myprofile/" element={<UserProfile />} />
+          <Route path="signup/" element={<Signup />} />
+          <Route path="login/" element={<Login />} />
 
           {/* <Route element={<AuthLayout />}>
             <Route path="login" element={<Login />} />

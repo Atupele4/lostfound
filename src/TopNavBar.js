@@ -2,24 +2,82 @@ import Container from "react-bootstrap/Container";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ItemForm from "./ItemForm";
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from "react-router-dom";
+import { getAuth, signOut } from "firebase/auth"; // Import Firebase Auth methods
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import InputGroup from "react-bootstrap/InputGroup";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import LoginState from "./myprofile/LoginState";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 
 function TopNavBar() {
   const [show, setShow] = useState(false);
+  const [user, setUser] = useState(null); // State to manage user authentication status
+  const navigate = useNavigate(); // React Router's navigate function
+  const [userName, setUserName] = useState(""); // State for the user's name
+
+  // Handle modal open and close
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  // Handle user authentication status (check user on mount)
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        
+
+        // Fetch user data from Firestore using the UID
+        const db = getFirestore();
+        const userRef = doc(db, "Users", currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setUserName(`${userData.firstName} ${userData.lastName}`); // Set user's full name
+        } else {
+          console.log("No such document!");
+        }
+      } else {
+        setUser(null);
+        setUserName("");
+      }
+    });
+
+    // Cleanup on component unmount
+    return () => unsubscribe();
+  }, []);
+
+  // Handle logout
+  const handleLogout = async () => {
+    const auth = getAuth();
+    try {
+      await signOut(auth); // Sign out the user
+      setUser(null); // Set user state to null
+      navigate("/"); // Redirect to home page or login page after logout
+    } catch (error) {
+      console.error("Error logging out: ", error);
+    }
+  };
 
   return (
     <>
       <Navbar expand="lg" className="bg-body-tertiary">
         <Container>
-          <Navbar.Brand as={NavLink} to="/">LostFound</Navbar.Brand>
+          <Navbar.Brand as={NavLink} to="/">
+            LostFound
+          </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link href="#link">Link</Nav.Link>
+              <Nav.Link as={NavLink} to="/myprofile">
+                My Profile
+              </Nav.Link>
               <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                 <NavDropdown.Item href="#action/3.1" onClick={handleShow}>
                   Action
@@ -31,17 +89,11 @@ function TopNavBar() {
                   <i className="bi bi-envelope"></i> Contact
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item href="#action/3.4">
-                  <i className="bi bi-box-arrow-right"></i> Logout
-                </NavDropdown.Item>
               </NavDropdown>
             </Nav>
-            <Nav className="ms-auto">
-              <Nav.Link href="#login" className="btn btn-primary text-white">
-                <i className="bi bi-person"></i> Login
-              </Nav.Link>
-            </Nav>
           </Navbar.Collapse>
+          
+          <LoginState userName={userName} />
         </Container>
       </Navbar>
 

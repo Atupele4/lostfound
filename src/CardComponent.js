@@ -1,6 +1,9 @@
-import React from "react";
-import { Card, Carousel, Button } from "react-bootstrap";
+import React, { useState } from "react";
+import { Card, Carousel, Button, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { getAuth } from "firebase/auth"; // Import Firebase Auth
+import { deleteDoc, doc } from "firebase/firestore"; // Import Firestore delete functions
+import { useFirebase } from "./FirebaseContext"; // Firebase context for access to db
 
 // Predefined tags and their corresponding colors
 const tagColors = {
@@ -28,9 +31,40 @@ const tagColors = {
 
 const CardComponent = ({ item, index, locationColors }) => {
   const navigate = useNavigate();
+  const { db } = useFirebase(); // Access Firestore from context
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // Modal visibility state
+  const [isDeleting, setIsDeleting] = useState(false); // Deletion in progress state
+  const currentUser = getAuth().currentUser; // Get current authenticated user
 
   const handleViewClick = () => {
     navigate(`/incident/${item.id}`);
+  };
+
+  const handleDeleteClick = () => {
+    setShowDeleteModal(true); // Show the confirmation modal
+  };
+
+  const handleConfirmDelete = async () => {
+    if (currentUser && currentUser.uid === item.uid) {
+      setIsDeleting(true);
+      try {
+        // Deleting item from Firestore
+        await deleteDoc(doc(db, "Items", item.id));
+        alert("Item deleted successfully.");
+        setShowDeleteModal(false); // Close modal after deletion
+      } catch (error) {
+        console.error("Error deleting document: ", error);
+        alert("Error deleting item.");
+      } finally {
+        setIsDeleting(false);
+      }
+    } else {
+      alert("You cannot delete an item you did not submit.");
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false); // Close modal without deleting
   };
 
   return (
@@ -45,7 +79,7 @@ const CardComponent = ({ item, index, locationColors }) => {
             <Carousel.Item key={imageIndex}>
               <img
                 src={image}
-                alt={`Item ${index + 1} ${imageIndex + 1}`} // Modify this if necessary to avoid redundant terms
+                alt={`Item ${index + 1} ${imageIndex + 1}`}
                 className="d-block w-100"
                 style={{ height: "200px", objectFit: "cover" }}
               />
@@ -62,7 +96,7 @@ const CardComponent = ({ item, index, locationColors }) => {
                   key={tagIndex}
                   className="badge rounded-pill me-2"
                   style={{
-                    backgroundColor: tagColors[tag] || "#007bff", // Default to blue if no color is assigned
+                    backgroundColor: tagColors[tag] || "#007bff",
                   }}
                 >
                   {tag}
@@ -88,7 +122,32 @@ const CardComponent = ({ item, index, locationColors }) => {
         <Button variant="primary" onClick={handleViewClick}>
           View
         </Button>
+
+        {/* Delete Button (only shown if current user is the one who submitted the item) */}
+        {currentUser && item.uid === currentUser.uid && (
+          <Button variant="danger" onClick={handleDeleteClick} className="mt-2">
+            Delete
+          </Button>
+        )}
       </Card.Body>
+
+      {/* Delete Confirmation Modal */}
+      <Modal show={showDeleteModal} onHide={handleCancelDelete}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete this item?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCancelDelete} disabled={isDeleting}>
+            No
+          </Button>
+          <Button variant="danger" onClick={handleConfirmDelete} disabled={isDeleting}>
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Card>
   );
 };
