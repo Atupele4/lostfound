@@ -4,28 +4,30 @@ import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth"; // Import Firebase Auth
 import { deleteDoc, doc } from "firebase/firestore"; // Import Firestore delete functions
 import { useFirebase } from "./FirebaseContext"; // Firebase context for access to db
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 
 // Predefined tags and their corresponding colors
 const tagColors = {
-  "Wallets": "#007bff", // Blue
-  "Keys": "#28a745", // Green
-  "Phones": "#dc3545", // Red
-  "Bags": "#ffc107", // Yellow
-  "Laptops": "#17a2b8", // Teal
-  "Watches": "#6f42c1", // Purple
-  "Glasses": "#e83e8c", // Pink
-  "Jewelry": "#fd7e14", // Orange
+  Wallets: "#007bff", // Blue
+  Keys: "#28a745", // Green
+  Phones: "#dc3545", // Red
+  Bags: "#ffc107", // Yellow
+  Laptops: "#17a2b8", // Teal
+  Watches: "#6f42c1", // Purple
+  Glasses: "#e83e8c", // Pink
+  Jewelry: "#fd7e14", // Orange
   "ID Cards": "#20c997", // Success
   "Credit/Debit Cards": "#fd7e14", // Orange
   "Clothing Items": "#343a40", // Dark
-  "Umbrellas": "#6610f2", // Indigo
+  Umbrellas: "#6610f2", // Indigo
   "Headphones/Earbuds": "#d63384", // Custom color
-  "Shoes": "#fd7e14", // Orange
-  'Cameras': "#ed7b00", // Blue
-  "Tablets": "#28a745", // Green
-  "Books": "#6c757d", // Grey
+  Shoes: "#fd7e14", // Orange
+  Cameras: "#ed7b00", // Blue
+  Tablets: "#28a745", // Green
+  Books: "#6c757d", // Grey
   "Power Banks": "#17a2b8", // Teal
-  "Documents": "#343a40", // Dark
+  Documents: "#343a40", // Dark
   "Water Bottles": "#f8f9fa", // Light Gray
 };
 
@@ -73,7 +75,7 @@ const CardComponent = ({ item, index, locationColors }) => {
       style={{ width: "18rem" }}
       className={`shadow-sm ${locationColors[item.location] || "border-light"}`}
     >
-      {item.images && item.images.length > 0 && (
+      {item.images && item.images.length > 0 ? (
         <Carousel>
           {item.images.map((image, imageIndex) => (
             <Carousel.Item key={imageIndex}>
@@ -86,7 +88,7 @@ const CardComponent = ({ item, index, locationColors }) => {
             </Carousel.Item>
           ))}
         </Carousel>
-      )}
+      ) : null}
       <Card.Body>
         <Card.Title>
           {item.tags && item.tags.length > 0 ? (
@@ -118,17 +120,28 @@ const CardComponent = ({ item, index, locationColors }) => {
           <strong>Phone Number:</strong> {item.phoneNumber || "N/A"}
         </Card.Text>
 
+        <Row>
+          <Col>
+            <Button variant="primary" className="mt-2" onClick={handleViewClick}>
+              View
+            </Button>
+          </Col>
+          <Col>
+            {currentUser && item.uid === currentUser.uid && (
+              <Button
+                variant="danger"
+                onClick={handleDeleteClick}
+                className="mt-2"
+              >
+                Delete
+              </Button>
+            )}
+          </Col>
+        </Row>
+
         {/* View Button */}
-        <Button variant="primary" onClick={handleViewClick}>
-          View
-        </Button>
 
         {/* Delete Button (only shown if current user is the one who submitted the item) */}
-        {currentUser && item.uid === currentUser.uid && (
-          <Button variant="danger" onClick={handleDeleteClick} className="mt-2">
-            Delete
-          </Button>
-        )}
       </Card.Body>
 
       {/* Delete Confirmation Modal */}
@@ -136,14 +149,20 @@ const CardComponent = ({ item, index, locationColors }) => {
         <Modal.Header closeButton>
           <Modal.Title>Confirm Deletion</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to delete this item?
-        </Modal.Body>
+        <Modal.Body>Are you sure you want to delete this item?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCancelDelete} disabled={isDeleting}>
+          <Button
+            variant="secondary"
+            onClick={handleCancelDelete}
+            disabled={isDeleting}
+          >
             No
           </Button>
-          <Button variant="danger" onClick={handleConfirmDelete} disabled={isDeleting}>
+          <Button
+            variant="danger"
+            onClick={handleConfirmDelete}
+            disabled={isDeleting}
+          >
             Yes
           </Button>
         </Modal.Footer>
