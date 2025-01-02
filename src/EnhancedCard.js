@@ -1,8 +1,15 @@
 import React, { useState } from "react";
 import { Card, Button, Modal } from "react-bootstrap";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Circle,
+  useMapEvents,
+} from "react-leaflet";
 import CommentComponent from "./CommentComponent";
 import Comments from "./Comments";
-import { getAuth } from "firebase/auth"; // Import Firebase Auth
+import { getAuth } from "firebase/auth"; // Firebase Auth
 import {
   deleteDoc,
   doc,
@@ -10,18 +17,21 @@ import {
   getDocs,
   query,
   where,
-  deleteField,
-} from "firebase/firestore"; // Import Firestore functions
-import { useFirebase } from "./FirebaseContext"; // Firebase context for access to db
+  updateDoc,
+} from "firebase/firestore"; // Firestore functions
+import { useFirebase } from "./FirebaseContext"; // Firebase context
+import "leaflet/dist/leaflet.css";
 
 const EnhancedCard = ({ item, index, locationColors, incidentId }) => {
-  const { db } = useFirebase(); // Access Firestore from context
+  const { db } = useFirebase(); // Access Firestore
   const [uploadedImages, setUploadedImages] = useState([]);
   const [rating, setRating] = useState(null); // 'up' or 'down'
   const [showModal, setShowModal] = useState(false);
   const [modalImage, setModalImage] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false); // Delete confirmation modal visibility
   const [isDeleting, setIsDeleting] = useState(false); // Deletion in progress state
+  const [showMapModal, setShowMapModal] = useState(false); // Map modal visibility
+  const [pinLocation, setPinLocation] = useState(null); // Pin location on the map
 
   const currentUser = getAuth().currentUser; // Get current authenticated user
 
@@ -47,6 +57,15 @@ const EnhancedCard = ({ item, index, locationColors, incidentId }) => {
 
   const handleRating = (value) => {
     setRating(value);
+  };
+
+  const handleMapModalOpen = () => {
+    setShowMapModal(true);
+  };
+
+  const handleMapModalClose = () => {
+    setShowMapModal(false);
+    setPinLocation(null); // Reset pin location on close
   };
 
   const handleDeleteClick = () => {
@@ -86,6 +105,42 @@ const EnhancedCard = ({ item, index, locationColors, incidentId }) => {
 
   const handleCancelDelete = () => {
     setShowDeleteModal(false); // Close modal without deleting
+  };
+
+  const handleSaveLocation = async () => {
+    if (pinLocation && currentUser && currentUser.uid === item.uid) {
+      try {
+        const itemDoc = doc(db, "Items", incidentId);
+        console.log(itemDoc);
+
+        // Extract lat and lng as plain fields
+        const locationData = {
+          lat: pinLocation.lat,
+          lng: pinLocation.lng,
+        };
+
+        await updateDoc(itemDoc, {
+          locationLngLat: locationData,
+        });
+
+        alert("Location saved successfully." + item);
+        setShowMapModal(false);
+      } catch (error) {
+        console.error("Error saving location: ", error);
+        alert("Failed to save location.");
+      }
+    } else {
+      alert("Invalid operation or no pin location set.");
+    }
+  };
+
+  const MapClickHandler = () => {
+    useMapEvents({
+      click: (e) => {
+        setPinLocation(e.latlng); // Set pin location on click
+      },
+    });
+    return null;
   };
 
   return (
@@ -155,6 +210,7 @@ const EnhancedCard = ({ item, index, locationColors, incidentId }) => {
             </Modal.Body>
           </Modal>
         </div>
+
         <Card.Body>
           <Card.Title>
             #{index + 1}: {item.tags?.length > 0 ? item.tags.join(", ") : "N/A"}
@@ -164,6 +220,8 @@ const EnhancedCard = ({ item, index, locationColors, incidentId }) => {
           </Card.Subtitle>
           <Card.Text>
             <strong>Description:</strong> {item.description || "N/A"} <br />
+            <strong>Location:</strong> {item.locationLngLat?.lat || "N/A"},{" "}
+            {item.locationLngLat?.lng || "N/A"} <br />
             <strong>Location Lost:</strong> {item.location || "N/A"} <br />
             <strong>Date Lost:</strong> {item.dateLost || "N/A"} <br />
             <strong>Date Found:</strong> {item.dateFound || "N/A"} <br />
@@ -185,6 +243,15 @@ const EnhancedCard = ({ item, index, locationColors, incidentId }) => {
               onClick={() => handleRating("down")}
             >
               👎
+            </Button>
+
+            {/* Map Icon */}
+            <Button
+              variant="info"
+              className="ms-3"
+              onClick={handleMapModalOpen}
+            >
+              🗺️
             </Button>
           </div>
 
@@ -211,34 +278,73 @@ const EnhancedCard = ({ item, index, locationColors, incidentId }) => {
               Delete Item
             </Button>
           )}
-        </Card.Body>
 
-        {/* Delete Confirmation Modal */}
-        <Modal show={showDeleteModal} onHide={handleCancelDelete}>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirm Deletion</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            Are you sure you want to delete this item and its associated
-            comments?
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="secondary"
-              onClick={handleCancelDelete}
-              disabled={isDeleting}
-            >
-              No
-            </Button>
-            <Button
-              variant="danger"
-              onClick={handleConfirmDelete}
-              disabled={isDeleting}
-            >
-              Yes
-            </Button>
-          </Modal.Footer>
-        </Modal>
+          {/* Map Modal */}
+          <Modal
+            show={showMapModal}
+            onHide={handleMapModalClose}
+            centered
+            size="lg"
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Select Location</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <MapContainer
+                center={[51.505, -0.09]}
+                zoom={13}
+                style={{ height: "400px", width: "100%" }}
+              >
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
+                <MapClickHandler />
+                {pinLocation && (
+                  <>
+                    <Marker position={pinLocation} />
+                    <Circle center={pinLocation} radius={500} />
+                  </>
+                )}
+              </MapContainer>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleMapModalClose}>
+                Cancel
+              </Button>
+              <Button variant="primary" onClick={handleSaveLocation}>
+                Save
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          {/* Delete Confirmation Modal */}
+          <Modal show={showDeleteModal} onHide={handleCancelDelete}>
+            <Modal.Header closeButton>
+              <Modal.Title>Confirm Deletion</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              Are you sure you want to delete this item and its associated
+              comments?
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                onClick={handleCancelDelete}
+                disabled={isDeleting}
+              >
+                No
+              </Button>
+              <Button
+                variant="danger"
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+              >
+                Yes
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </Card.Body>
       </Card>
     </>
   );

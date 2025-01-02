@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMap,
+  useMapEvents,
+} from "react-leaflet";
+import { Modal, Button } from "react-bootstrap";
 import "./App.css";
 import "leaflet/dist/leaflet.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -14,8 +22,20 @@ function MapView({ position }) {
   return null;
 }
 
+function MapClickHandler({ onMapClick }) {
+  useMapEvents({
+    click: (event) => {
+      onMapClick(event.latlng);
+    },
+  });
+
+  return null;
+}
+
 function App() {
   const [currentPosition, setCurrentPosition] = useState([51.505, -0.09]); // Default location
+  const [clickedPosition, setClickedPosition] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -34,9 +54,17 @@ function App() {
     );
   }, []);
 
+  const handleMapClick = (latlng) => {
+    setClickedPosition(latlng);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
   return (
     <>
-     
       <div className="App">
         <div
           className="Map-container"
@@ -55,9 +83,31 @@ function App() {
             <Marker position={currentPosition}>
               <Popup>You are here!</Popup>
             </Marker>
+            <MapClickHandler onMapClick={handleMapClick} />
           </MapContainer>
         </div>
       </div>
+
+      {/* Modal Popup */}
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Map Click Coordinates</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            <strong>Latitude:</strong> {clickedPosition?.lat}
+          </p>
+          <p>
+            <strong>Longitude:</strong> {clickedPosition?.lng}
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <DataGrid />
     </>
   );

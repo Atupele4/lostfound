@@ -66,6 +66,7 @@ function ItemForm({ show, handleClose }) {
     location: "", // Location tag field
     files: [], // Array of files to upload
     comments: [], // Array of files to upload
+    locationLngLat: null, // Array of files to upload
   });
   const [errors, setErrors] = useState({});
 
@@ -153,6 +154,7 @@ function ItemForm({ show, handleClose }) {
           phoneNumber: formData.phoneNumber,
           status: "Unclaimed", // Default status
           imagePaths: [], // Placeholder for image paths
+          locationLngLat: null, // Placeholder for image paths
         };
 
         const docRef = await addDoc(collection(db, "Items"), docData);
