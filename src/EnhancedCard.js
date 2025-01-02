@@ -2,12 +2,29 @@ import React, { useState } from "react";
 import { Card, Button, Modal } from "react-bootstrap";
 import CommentComponent from "./CommentComponent";
 import Comments from "./Comments";
+import { getAuth } from "firebase/auth"; // Import Firebase Auth
+import {
+  deleteDoc,
+  doc,
+  collection,
+  getDocs,
+  query,
+  where,
+  deleteField,
+} from "firebase/firestore"; // Import Firestore functions
+import { useFirebase } from "./FirebaseContext"; // Firebase context for access to db
 
 const EnhancedCard = ({ item, index, locationColors, incidentId }) => {
+  const { db } = useFirebase(); // Access Firestore from context
   const [uploadedImages, setUploadedImages] = useState([]);
   const [rating, setRating] = useState(null); // 'up' or 'down'
   const [showModal, setShowModal] = useState(false);
   const [modalImage, setModalImage] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // Delete confirmation modal visibility
+  const [isDeleting, setIsDeleting] = useState(false); // Deletion in progress state
+
+  const currentUser = getAuth().currentUser; // Get current authenticated user
+
   const handleCommentSubmit = (comment) => {
     console.log("Comment Submitted:", comment);
   };
@@ -32,9 +49,52 @@ const EnhancedCard = ({ item, index, locationColors, incidentId }) => {
     setRating(value);
   };
 
+  const handleDeleteClick = () => {
+    setShowDeleteModal(true); // Show confirmation modal
+  };
+
+  const handleConfirmDelete = async () => {
+    if (currentUser && currentUser.uid === item.uid) {
+      setIsDeleting(true);
+      try {
+        // Delete item from Items collection
+        await deleteDoc(doc(db, "Items", item.id));
+
+        // Delete associated comments from the Comments collection
+        const commentsQuery = query(
+          collection(db, "comments"),
+          where("incidentId", "==", item.id)
+        );
+        const querySnapshot = await getDocs(commentsQuery);
+
+        querySnapshot.forEach(async (docSnap) => {
+          await deleteDoc(doc(db, "comments", docSnap.id)); // Delete each comment document
+        });
+
+        alert("Item and associated comments deleted successfully.");
+        setShowDeleteModal(false); // Close modal after deletion
+      } catch (error) {
+        console.error("Error deleting item or comments: ", error);
+        alert("Error deleting item and comments.");
+      } finally {
+        setIsDeleting(false);
+      }
+    } else {
+      alert("You cannot delete an item you did not submit.");
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false); // Close modal without deleting
+  };
+
+  console.log(item)
+
   return (
-    <Card
-      key={item.id}
+    <>
+
+<Card
+      key={item.uid}
       style={{ width: "70%", margin: "0 auto" }} // Set width and center the card
       className={`shadow-sm ${locationColors[item.location] || "border-light"}`}
     >
@@ -139,10 +199,45 @@ const EnhancedCard = ({ item, index, locationColors, incidentId }) => {
         </div>
 
         <div>
-          <Comments incidentIds={item.Comments} />
+          <Comments incidentIds={item.comments} />
         </div>
+
+        {/* Delete Button (only shown if current user is the one who submitted the item) */}
+        {currentUser && item.uid === currentUser.uid && (
+          <Button variant="danger" onClick={handleDeleteClick} className="mt-3">
+            Delete Item
+          </Button>
+        )}
       </Card.Body>
+
+      {/* Delete Confirmation Modal */}
+      <Modal show={showDeleteModal} onHide={handleCancelDelete}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete this item and its associated comments?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={handleCancelDelete}
+            disabled={isDeleting}
+          >
+            No
+          </Button>
+          <Button
+            variant="danger"
+            onClick={handleConfirmDelete}
+            disabled={isDeleting}
+          >
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Card>
+    </>
+
   );
 };
 

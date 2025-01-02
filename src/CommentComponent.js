@@ -14,8 +14,6 @@ const CommentComponent = ({ incidentId, onCommentSubmit, onImageUpload }) => {
   // const [selectedImages, setSelectedImages] = useState([]);
   const { db } = useFirebase();
 
-  console.log(incidentId);
-
   // const handleImageUpload = (e) => {
   //   const files = Array.from(e.target.files);
   //   setSelectedImages(files);
@@ -54,7 +52,7 @@ const CommentComponent = ({ incidentId, onCommentSubmit, onImageUpload }) => {
       // Add the new document ID to the "Items" collection
       const itemDocRef = doc(db, "Items", incidentId);
       await updateDoc(itemDocRef, {
-        Comments: arrayUnion(docRef.id),
+        comments: arrayUnion(docRef.id),
       });
 
       // Clear inputs after successful submission

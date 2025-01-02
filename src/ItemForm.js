@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Modal, Button, Form, Badge } from "react-bootstrap";
 import { collection, addDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getAuth } from "firebase/auth"; // Import Firebase Auth
 import { useFirebase } from "./FirebaseContext";
 
 function ItemForm({ show, handleClose }) {
@@ -130,11 +131,21 @@ function ItemForm({ show, handleClose }) {
   const handleSubmit = async () => {
     if (validateForm()) {
       try {
+        // Get the current authenticated user's UID
+        const auth = getAuth();
+        const currentUser = auth.currentUser;
+
+        if (!currentUser) {
+          alert("You must be logged in to submit an item.");
+          return;
+        }
+
         // Initialize an array to store file URLs
         const fileUrls = [];
-  
+
         // Create a document in Firestore first to get its ID
         const docData = {
+          uid: currentUser.uid, // Add UID to document data
           tags: formData.tags,
           description: formData.description,
           location: formData.location,
@@ -143,9 +154,9 @@ function ItemForm({ show, handleClose }) {
           status: "Unclaimed", // Default status
           imagePaths: [], // Placeholder for image paths
         };
-  
+
         const docRef = await addDoc(collection(db, "Items"), docData);
-  
+
         // Upload each file to Firebase Storage
         for (const file of formData.files) {
           const fileRef = ref(storage, `${docRef.id}/${file.name}`);
@@ -153,13 +164,12 @@ function ItemForm({ show, handleClose }) {
           const fileUrl = await getDownloadURL(fileRef); // Get downloadable URL
           fileUrls.push(fileUrl); // Add URL to the array
         }
-  
+
         // Update Firestore document with imagePaths
         await addDoc(collection(db, "Items"), {
-          ...docData,
           imagePaths: fileUrls,
         });
-  
+
         console.log("Document written with ID: ", docRef.id);
         alert("Form submitted successfully.");
         handleClose(); // Close modal after successful submission
@@ -169,7 +179,6 @@ function ItemForm({ show, handleClose }) {
       }
     }
   };
-  
 
   return (
     <Modal show={show} onHide={handleClose}>
