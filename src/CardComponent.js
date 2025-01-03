@@ -39,7 +39,7 @@ const CardComponent = ({ item, index, locationColors }) => {
   const currentUser = getAuth().currentUser; // Get current authenticated user
 
   const handleViewClick = () => {
-    navigate(`/incident/${item.id}`);
+    navigate(`/viewincident/${item.id}`);
   };
 
   const handleDeleteClick = () => {

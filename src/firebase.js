@@ -7,7 +7,6 @@ const firebaseConfig = {
   authDomain: "myexpensetracker-6fed6.firebaseapp.com",
   projectId: "myexpensetracker-6fed6",
   storageBucket: "myexpensetracker-6fed6.appspot.com",
-  messagingSenderId: "1046720930332",
   appId: "1:1046720930332:web:bf10405201b0f073ca75d9",
 };
 

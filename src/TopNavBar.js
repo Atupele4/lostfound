@@ -30,13 +30,12 @@ function TopNavBar() {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        
 
         // Fetch user data from Firestore using the UID
         const db = getFirestore();
         const userRef = doc(db, "Users", currentUser.uid);
         const userDoc = await getDoc(userRef);
-        
+
         if (userDoc.exists()) {
           const userData = userDoc.data();
           setUserName(`${userData.firstName} ${userData.lastName}`); // Set user's full name
@@ -79,9 +78,7 @@ function TopNavBar() {
                 My Profile
               </Nav.Link>
               <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                <NavDropdown.Item href="#action/3.1" onClick={handleShow}>
-                  Action
-                </NavDropdown.Item>
+                <NavDropdown.Item as={NavLink} to="/postincident">Post Incident</NavDropdown.Item>
                 <NavDropdown.Item href="#action/3.2">
                   <i className="bi bi-info-circle"></i> About Us
                 </NavDropdown.Item>
@@ -92,12 +89,10 @@ function TopNavBar() {
               </NavDropdown>
             </Nav>
           </Navbar.Collapse>
-          
+
           <LoginState userName={userName} />
         </Container>
       </Navbar>
-
-      <ItemForm show={show} handleClose={handleClose} />
     </>
   );
 }

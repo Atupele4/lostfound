@@ -123,7 +123,6 @@ const EnhancedCard = ({ item, index, locationColors, incidentId }) => {
           locationLngLat: locationData,
         });
 
-        alert("Location saved successfully." + item);
         setShowMapModal(false);
       } catch (error) {
         console.error("Error saving location: ", error);
@@ -263,14 +262,14 @@ const EnhancedCard = ({ item, index, locationColors, incidentId }) => {
               onImageUpload={handleImageUpload}
             />
           </div> */}
-{/* 
+          {/* 
           <div>
             <Comments incidentIds={item.comments} />
           </div> */}
 
           {/* Delete Button (only shown if current user is the one who submitted the item) */}
           {/* {currentUser && item.uid === currentUser.uid && ( */}
-            {/* <Button
+          {/* <Button
               variant="danger"
               onClick={handleDeleteClick}
               className="mt-3"
@@ -291,8 +290,8 @@ const EnhancedCard = ({ item, index, locationColors, incidentId }) => {
             </Modal.Header>
             <Modal.Body>
               <MapContainer
-                center={[51.505, -0.09]}
-                zoom={13}
+                center={[-15.3875, 28.3228]} // Updated coordinates for Lusaka
+                zoom={10}
                 style={{ height: "400px", width: "100%" }}
               >
                 <TileLayer

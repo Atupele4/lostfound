@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Modal, Button, Form, Badge } from "react-bootstrap";
+import { Form, Button, Badge, Container, Row, Col } from "react-bootstrap";
 import { collection, addDoc, updateDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { getAuth } from "firebase/auth"; // Import Firebase Auth
+import { getAuth } from "firebase/auth";
 import { useFirebase } from "./FirebaseContext";
 
-function ItemForm({ show, handleClose }) {
+function ItemForm() {
   const predefinedTags = [
     "Wallets",
     "Keys",
@@ -28,6 +28,7 @@ function ItemForm({ show, handleClose }) {
     "Documents",
     "Water Bottles",
   ];
+
   const locationTags = [
     "Lusaka",
     "Kitwe",
@@ -54,20 +55,20 @@ function ItemForm({ show, handleClose }) {
     "Petauke",
     "Kaoma",
     "Mbala",
-  ]; // Location tag options
-  const { db } = useFirebase(); // Access Firestore from context
-  const storage = getStorage(); // Initialize Firebase Storage
+  ];
+
+  const { db } = useFirebase();
+  const storage = getStorage();
 
   const [formData, setFormData] = useState({
     description: "",
     dateLost: "",
     phoneNumber: "",
     tags: [],
-    location: "", // Location tag field
-    files: [], // Array of files to upload
-    comments: [], // Array of files to upload
-    locationLngLat: null, // Array of files to upload
+    location: "",
+    files: [],
   });
+
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
@@ -96,24 +97,20 @@ function ItemForm({ show, handleClose }) {
   const toggleTag = (tag) => {
     setFormData((prevState) => {
       const tags = prevState.tags.includes(tag)
-        ? prevState.tags.filter((t) => t !== tag) // Remove tag
-        : [...prevState.tags, tag]; // Add tag
+        ? prevState.tags.filter((t) => t !== tag)
+        : [...prevState.tags, tag];
       return { ...prevState, tags };
     });
   };
 
   const selectLocation = (location) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      location, // Update location field with the selected value
-    }));
+    setFormData((prevState) => ({ ...prevState, location }));
   };
 
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.description.trim())
-      newErrors.description = "Description is required.";
+    if (!formData.description.trim()) newErrors.description = "Description is required.";
     if (!formData.dateLost) newErrors.dateLost = "Date Lost is required.";
 
     if (!formData.phoneNumber.trim()) {
@@ -121,9 +118,8 @@ function ItemForm({ show, handleClose }) {
     } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
       newErrors.phoneNumber = "Phone number must be 10 digits.";
     }
-    if (!formData.location) {
-      newErrors.location = "Location is required.";
-    }
+
+    if (!formData.location) newErrors.location = "Location is required.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -132,7 +128,6 @@ function ItemForm({ show, handleClose }) {
   const handleSubmit = async () => {
     if (validateForm()) {
       try {
-        // Get the current authenticated user's UID
         const auth = getAuth();
         const currentUser = auth.currentUser;
 
@@ -141,40 +136,41 @@ function ItemForm({ show, handleClose }) {
           return;
         }
 
-        // Initialize an array to store file URLs
         const fileUrls = [];
 
-        // Create a document in Firestore first to get its ID
         const docData = {
-          uid: currentUser.uid, // Add UID to document data
+          uid: currentUser.uid,
           tags: formData.tags,
           description: formData.description,
           location: formData.location,
           dateLost: formData.dateLost,
           phoneNumber: formData.phoneNumber,
-          status: "Unclaimed", // Default status
-          imagePaths: [], // Placeholder for image paths
-          locationLngLat: null, // Placeholder for image paths
+          status: "Unclaimed",
+          imagePaths: [],
         };
 
         const docRef = await addDoc(collection(db, "Items"), docData);
 
-        // Upload each file to Firebase Storage
         for (const file of formData.files) {
           const fileRef = ref(storage, `${docRef.id}/${file.name}`);
-          await uploadBytes(fileRef, file); // Upload file
-          const fileUrl = await getDownloadURL(fileRef); // Get downloadable URL
-          fileUrls.push(fileUrl); // Add URL to the array
+          await uploadBytes(fileRef, file);
+          const fileUrl = await getDownloadURL(fileRef);
+          fileUrls.push(fileUrl);
         }
 
-        // Update Firestore document with imagePaths using the document ID
         await updateDoc(docRef, {
           imagePaths: fileUrls,
         });
 
-        console.log("Document written with ID: ", docRef.id);
         alert("Form submitted successfully.");
-        handleClose(); // Close modal after successful submission
+        setFormData({
+          description: "",
+          dateLost: "",
+          phoneNumber: "",
+          tags: [],
+          location: "",
+          files: [],
+        });
       } catch (e) {
         console.error("Error adding document: ", e);
         alert(`Error adding document: ${e}`);
@@ -183,120 +179,119 @@ function ItemForm({ show, handleClose }) {
   };
 
   return (
-    <Modal show={show} onHide={handleClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>Lost and Found Item</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form>
-          <Form.Group className="mb-3" controlId="formTags">
-            <Form.Label>Item Type</Form.Label>
-            <div className="d-flex flex-wrap gap-2">
-              {predefinedTags.map((tag) => (
-                <Badge
-                  key={tag}
-                  pill
-                  className={`p-2 cursor-pointer ${
-                    formData.tags.includes(tag)
-                      ? "bg-primary text-white"
-                      : "bg-light text-dark"
-                  }`}
-                  onClick={() => toggleTag(tag)}
-                >
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-          </Form.Group>
+    <>
+    <Container className="d-flex justify-content-center align-items-center vh-100">
+      <Row className="w-100" style={{ maxWidth: "600px" }}>
+        <Col>
+          <h2 className="text-center mb-4">Incidence Report</h2>
+          <Form>
+            <Form.Group className="mb-3" controlId="formTags">
+              <Form.Label>Incident Tag</Form.Label>
+              <div className="d-flex flex-wrap gap-2">
+                {predefinedTags.map((tag) => (
+                  <Badge
+                    key={tag}
+                    pill
+                    className={`p-2 cursor-pointer ${
+                      formData.tags.includes(tag)
+                        ? "bg-primary text-white"
+                        : "bg-light text-dark"
+                    }`}
+                    onClick={() => toggleTag(tag)}
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formDescription">
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={3}
-              placeholder="Enter item description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              isInvalid={!!errors.description}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.description}
-            </Form.Control.Feedback>
-          </Form.Group>
+            <Form.Group className="mb-3" controlId="formDescription">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                placeholder="Enter item description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                isInvalid={!!errors.description}
+              />
+              <Form.Control.Feedback type="invalid">
+                {errors.description}
+              </Form.Control.Feedback>
+            </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formDateLost">
-            <Form.Label>Date Lost</Form.Label>
-            <Form.Control
-              type="date"
-              name="dateLost"
-              value={formData.dateLost}
-              onChange={handleChange}
-              isInvalid={!!errors.dateLost}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.dateLost}
-            </Form.Control.Feedback>
-          </Form.Group>
+            <Form.Group className="mb-3" controlId="formDateLost">
+              <Form.Label>Date of Incidence</Form.Label>
+              <Form.Control
+                type="date"
+                name="dateLost"
+                value={formData.dateLost}
+                onChange={handleChange}
+                isInvalid={!!errors.dateLost}
+              />
+              <Form.Control.Feedback type="invalid">
+                {errors.dateLost}
+              </Form.Control.Feedback>
+            </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formPhoneNumber">
-            <Form.Label>Phone Number</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter phone number"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleChange}
-              isInvalid={!!errors.phoneNumber}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.phoneNumber}
-            </Form.Control.Feedback>
-          </Form.Group>
+            <Form.Group className="mb-3" controlId="formPhoneNumber">
+              <Form.Label>Contact Phone Number</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter phone number"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                isInvalid={!!errors.phoneNumber}
+              />
+              <Form.Control.Feedback type="invalid">
+                {errors.phoneNumber}
+              </Form.Control.Feedback>
+            </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formLocation">
-            <Form.Label>Incident Location</Form.Label>
-            <div className="d-flex flex-wrap gap-2">
-              {locationTags.map((location) => (
-                <Badge
-                  key={location}
-                  pill
-                  className={`p-2 cursor-pointer ${
-                    formData.location === location
-                      ? "bg-primary text-white"
-                      : "bg-light text-dark"
-                  }`}
-                  onClick={() => selectLocation(location)}
-                >
-                  {location}
-                </Badge>
-              ))}
-            </div>
-            {errors.location && (
-              <Form.Text className="text-danger">{errors.location}</Form.Text>
-            )}
-          </Form.Group>
+            <Form.Group className="mb-3" controlId="formLocation">
+              <Form.Label>Incidence Location</Form.Label>
+              <div className="d-flex flex-wrap gap-2">
+                {locationTags.map((location) => (
+                  <Badge
+                    key={location}
+                    pill
+                    className={`p-2 cursor-pointer ${
+                      formData.location === location
+                        ? "bg-primary text-white"
+                        : "bg-light text-dark"
+                    }`}
+                    onClick={() => selectLocation(location)}
+                  >
+                    {location}
+                  </Badge>
+                ))}
+              </div>
+              {errors.location && (
+                <Form.Text className="text-danger">{errors.location}</Form.Text>
+              )}
+            </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formFiles">
-            <Form.Label>Upload Photos (Max 5, 500KB each)</Form.Label>
-            <Form.Control
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleFileChange}
-            />
-          </Form.Group>
-        </Form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
-        </Button>
-        <Button variant="primary" onClick={handleSubmit}>
-          Save Changes
-        </Button>
-      </Modal.Footer>
-    </Modal>
+            <Form.Group className="mb-3" controlId="formFiles">
+              <Form.Label>Upload Photos (Max 5, 500KB each)</Form.Label>
+              <Form.Control
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleFileChange}
+              />
+            </Form.Group>
+
+            <Button variant="primary" onClick={handleSubmit} className="w-100">
+              Submit
+            </Button>
+          </Form>
+        </Col>
+      </Row>
+    </Container>
+    </>
+    
   );
 }
 

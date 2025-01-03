@@ -9,6 +9,7 @@ import { FirebaseProvider } from "./FirebaseContext";
 import UserProfile from "./myprofile/UserProfile";
 import Signup from "./myprofile/Signup ";
 import Login from "./myprofile/Login";
+import ItemForm from "./ItemForm";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -21,8 +22,9 @@ root.render(
         </Routes> */}
         <Routes>
           <Route index element={<App />} />
-          <Route path="incident/:incidentId" element={<Incident incidentId={3} />} />
+          <Route path="viewincident/:incidentId" element={<Incident incidentId={3} />} />
           <Route path="myprofile/" element={<UserProfile />} />
+          <Route path="postincident/" element={<ItemForm />} />
           <Route path="signup/" element={<Signup />} />
           <Route path="login/" element={<Login />} />
 
