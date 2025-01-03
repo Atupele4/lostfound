@@ -255,29 +255,29 @@ const EnhancedCard = ({ item, index, locationColors, incidentId }) => {
             </Button>
           </div>
 
-          <div>
+          {/* <div>
             <h3>Item Comments</h3>
             <CommentComponent
               incidentId={incidentId}
               onCommentSubmit={handleCommentSubmit}
               onImageUpload={handleImageUpload}
             />
-          </div>
-
+          </div> */}
+{/* 
           <div>
             <Comments incidentIds={item.comments} />
-          </div>
+          </div> */}
 
           {/* Delete Button (only shown if current user is the one who submitted the item) */}
-          {currentUser && item.uid === currentUser.uid && (
-            <Button
+          {/* {currentUser && item.uid === currentUser.uid && ( */}
+            {/* <Button
               variant="danger"
               onClick={handleDeleteClick}
               className="mt-3"
             >
               Delete Item
-            </Button>
-          )}
+            </Button> */}
+          {/* // )} */}
 
           {/* Map Modal */}
           <Modal
