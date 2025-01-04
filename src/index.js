@@ -7,8 +7,8 @@ import Incident from "./Incident";
 import { BrowserRouter, Routes, Route } from "react-router";
 import { FirebaseProvider } from "./FirebaseContext";
 import UserProfile from "./myprofile/UserProfile";
-import Signup from "./myprofile/Signup ";
-import Login from "./myprofile/Login";
+import Signup from "./login/Signup ";
+import Login from "./login/Login";
 import ItemForm from "./ItemForm";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
