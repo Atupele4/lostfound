@@ -8,31 +8,61 @@ import {
   Image,
   Spinner,
 } from "react-bootstrap";
+import { getAuth } from "firebase/auth";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
+import MyincidenceList from "./MyincidenceList";
 
 const UserProfile = () => {
-  // Define the initial state for the user details
   const [userDetails, setUserDetails] = useState({
     username: "",
     email: "",
     profilePicture: "",
   });
 
-  // State for handling form submission
   const [isUpdating, setIsUpdating] = useState(false);
+  const [incidentids, setIncidentIds] = useState([]);
 
-  // Fetch user data when the component mounts
   useEffect(() => {
-    // Simulate fetching user data from an API or local storage
-    const fetchedUserData = {
-      username: "JohnDoe",
-      email: "johndoe@example.com",
-      profilePicture: "https://example.com/profile-pic.jpg",
+    const getUser = async () => {
+      try {
+        const auth = getAuth();
+        const db = getFirestore();
+
+        const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+          if (currentUser) {
+            const userRef = doc(db, "Users", currentUser.uid);
+            const userDoc = await getDoc(userRef);
+
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              setUserDetails({
+                username: userData.username || "",
+                email: userData.email || "",
+                profilePicture: userData.profilePicture || "",
+              });
+
+              // Update incident IDs if available
+              if (Array.isArray(userData.incidents)) {
+                setIncidentIds(userData.incidents);
+              } else {
+                console.warn("No incidents found for this user.");
+                setIncidentIds([]);
+              }
+            } else {
+              console.log("No such document!");
+            }
+          }
+        });
+
+        return () => unsubscribe(); // Cleanup the listener on component unmount
+      } catch (error) {
+        console.error("Error fetching user document:", error);
+      }
     };
 
-    setUserDetails(fetchedUserData);
+    getUser();
   }, []);
 
-  // Handle changes to the form fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUserDetails((prevDetails) => ({
@@ -41,7 +71,6 @@ const UserProfile = () => {
     }));
   };
 
-  // Handle file upload for the profile picture
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -52,14 +81,11 @@ const UserProfile = () => {
     }
   };
 
-  // Handle form submission to update user profile
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsUpdating(true);
 
-    // Simulate an API call to update the user data
     setTimeout(() => {
-      // Resetting the updating state after "updating"
       setIsUpdating(false);
       alert("Profile updated successfully!");
     }, 1000);
@@ -131,6 +157,9 @@ const UserProfile = () => {
               )}
             </Button>
           </Form>
+        </Col>
+        <Col>
+          <MyincidenceList incidentids={incidentids} />
         </Col>
       </Row>
     </Container>

@@ -3,26 +3,15 @@ import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { useState, useEffect } from "react";
-import ItemForm from "./ItemForm";
 import { NavLink, useNavigate } from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth"; // Import Firebase Auth methods
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import InputGroup from "react-bootstrap/InputGroup";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import LoginState from "./login/LoginState";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
+import LoginState from "./login/LoginState";
 
 function TopNavBar() {
-  const [show, setShow] = useState(false);
   const [user, setUser] = useState(null); // State to manage user authentication status
   const navigate = useNavigate(); // React Router's navigate function
   const [userName, setUserName] = useState(""); // State for the user's name
-
-  // Handle modal open and close
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
 
   // Handle user authentication status (check user on mount)
   useEffect(() => {
@@ -65,35 +54,35 @@ function TopNavBar() {
   };
 
   return (
-    <>
-      <Navbar expand="lg" className="bg-body-tertiary">
-        <Container>
-          <Navbar.Brand as={NavLink} to="/">
-            LostFound
-          </Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <Nav.Link as={NavLink} to="/myprofile">
-                My Profile
-              </Nav.Link>
-              <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                <NavDropdown.Item as={NavLink} to="/postincident">Post Incident</NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.2">
-                  <i className="bi bi-info-circle"></i> About Us
-                </NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.3">
-                  <i className="bi bi-envelope"></i> Contact
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-              </NavDropdown>
-            </Nav>
-          </Navbar.Collapse>
+    <Navbar expand="lg" className="bg-body-tertiary" fixed="top">
+      <Container>
+        <Navbar.Brand as={NavLink} to="/">
+          LostFound
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link as={NavLink} to="/myprofile">
+              My Profile
+            </Nav.Link>
+            <NavDropdown title="Dropdown" id="basic-nav-dropdown">
+              <NavDropdown.Item as={NavLink} to="/postincident">
+                Post Incident
+              </NavDropdown.Item>
+              <NavDropdown.Item href="#action/3.2">
+                <i className="bi bi-info-circle"></i> About Us
+              </NavDropdown.Item>
+              <NavDropdown.Item href="#action/3.3">
+                <i className="bi bi-envelope"></i> Contact
+              </NavDropdown.Item>
+              <NavDropdown.Divider />
+            </NavDropdown>
+          </Nav>
+        </Navbar.Collapse>
 
-          <LoginState userName={userName} />
-        </Container>
-      </Navbar>
-    </>
+        <LoginState userName={userName} />
+      </Container>
+    </Navbar>
   );
 }
 
