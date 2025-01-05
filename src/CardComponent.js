@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth"; // Import Firebase Auth
 import { deleteDoc, doc } from "firebase/firestore"; // Import Firestore delete functions
 import { useFirebase } from "./FirebaseContext"; // Firebase context for access to db
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
+import Image from "react-bootstrap/Image";
 // Predefined tags and their corresponding colors
 const tagColors = {
   Wallets: "#007bff", // Blue
@@ -73,9 +73,9 @@ const CardComponent = ({ item, index, locationColors }) => {
     <Card
       key={item.id}
       style={{ width: "18rem" }}
-      className={`shadow-sm ${locationColors[item.location] || "border-light"}`}
+      className={`shadow-sm "border-success"}`}
     >
-      {item.images && item.images.length > 0 ? (
+      {/* {item.images && item.images.length > 0 ? (
         <Carousel>
           {item.images.map((image, imageIndex) => (
             <Carousel.Item key={imageIndex}>
@@ -88,7 +88,7 @@ const CardComponent = ({ item, index, locationColors }) => {
             </Carousel.Item>
           ))}
         </Carousel>
-      ) : null}
+      ) : null} */}
       <Card.Body>
         <Card.Title>
           {item.tags && item.tags.length > 0 ? (
@@ -116,32 +116,33 @@ const CardComponent = ({ item, index, locationColors }) => {
           <strong>Description:</strong> {item.description || "N/A"} <br />
           <strong>Location Lost:</strong> {item.location || "N/A"} <br />
           <strong>Date Lost:</strong> {item.dateLost || "N/A"} <br />
-          <strong>Date Found:</strong> {item.dateFound || "N/A"} <br />
-          <strong>Phone Number:</strong> {item.phoneNumber || "N/A"}
+          {/* <strong>Date Found:</strong> {item.dateFound || "N/A"} <br /> */}
+          {/* <strong>Phone Number:</strong> {item.phoneNumber || "N/A"} */}
         </Card.Text>
 
-        <Row>
-          <Col>
-            <Button variant="primary" className="mt-2" onClick={handleViewClick}>
-              View
+        <div className="d-flex gap-2">
+          {/* View Button */}
+          <Button
+            size="sm"
+            variant="primary"
+            className="mt-2"
+            onClick={handleViewClick}
+          >
+            View
+          </Button>
+          {/* Delete Button (only shown if current user is the one who submitted the item) */}
+
+          {currentUser && item.uid === currentUser.uid && (
+            <Button
+              size="sm"
+              variant="danger"
+              onClick={handleDeleteClick}
+              className="mt-2"
+            >
+              Delete
             </Button>
-          </Col>
-          <Col>
-            {currentUser && item.uid === currentUser.uid && (
-              <Button
-                variant="danger"
-                onClick={handleDeleteClick}
-                className="mt-2"
-              >
-                Delete
-              </Button>
-            )}
-          </Col>
-        </Row>
-
-        {/* View Button */}
-
-        {/* Delete Button (only shown if current user is the one who submitted the item) */}
+          )}
+        </div>
       </Card.Body>
 
       {/* Delete Confirmation Modal */}

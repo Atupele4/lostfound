@@ -95,7 +95,7 @@ function DataGrid() {
 
   return (
     <div>
-      <div className="d-flex flex-wrap gap-3 justify-content-center">
+      <div className="d-flex flex-wrap gap-3 justify-content-center mt-3">
         {items.map((item, index) => (
           <CardComponent
             key={item.id}

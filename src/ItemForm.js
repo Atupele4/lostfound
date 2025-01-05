@@ -28,6 +28,7 @@ function ItemForm() {
     "Power Banks",
     "Documents",
     "Water Bottles",
+    "Television",
   ];
 
   const locationTags = [
