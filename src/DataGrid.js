@@ -12,7 +12,7 @@ import { getDownloadURL, ref, getStorage } from "firebase/storage";
 import { useFirebase } from "./FirebaseContext";
 import CardComponent from "./CardComponent";
 
-function DataGrid() {
+function DataGrid({handleShowOnMapClick}) {
   const { db } = useFirebase();
   const storage = getStorage(); // Initialize Firebase Storage
   const [items, setItems] = useState([]); // Stores the fetched items
@@ -102,6 +102,7 @@ function DataGrid() {
             item={item}
             index={index}
             locationColors={locationColors}
+            handleShowOnMapClick={handleShowOnMapClick}
           />
         ))}
       </div>

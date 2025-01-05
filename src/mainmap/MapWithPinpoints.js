@@ -3,6 +3,7 @@ import {
   MapContainer,
   TileLayer,
   Circle,
+  Marker,
   Popup,
   useMapEvents,
 } from "react-leaflet";
@@ -105,7 +106,7 @@ function MapClickHandler({ onMapClick }) {
 }
 
 
-function MapWithPinpoints() {
+function MapWithPinpoints({incidentPosition}) {
   const { db } = useFirebase();
   const [items, setItems] = useState([]);
   const [clickedPosition, setClickedPosition] = useState(null);
@@ -117,6 +118,7 @@ function MapWithPinpoints() {
   };
 
   useEffect(() => {
+    console.log("Incident Position: ", incidentPosition);
     const fetchItemsWithLocations = async () => {
       try {
         const itemsRef = collection(db, "Items");
@@ -140,12 +142,10 @@ function MapWithPinpoints() {
     fetchItemsWithLocations();
   }, [db]);
 
-  const defaultPosition = { lat: -15.3875, lng: 28.3228 };
-
   return (
     <>
       <MapContainer
-        center={defaultPosition}
+        center={incidentPosition}
         zoom={13}
         style={{ height: "400px", width: "100%" }}
       >
@@ -172,6 +172,18 @@ function MapWithPinpoints() {
           </Circle>
         ))}
         <MapClickHandler onMapClick={handleMapClick} />
+
+        {incidentPosition && (
+        <Marker position={incidentPosition}>
+          <Popup>
+            <strong>Incident Location</strong>
+            <br />
+            Latitude: {incidentPosition.lat}
+            <br />
+            Longitude: {incidentPosition.lng}
+          </Popup>
+        </Marker>
+      )}
       </MapContainer>
 
       {clickedPosition && (
