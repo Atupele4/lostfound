@@ -40,7 +40,7 @@ const Incident = () => {
   }
 
   return (
-    <div className="d-flex flex-wrap mt-lg-5">
+    <div className="d-flex flex-wrap">
       {items.map((item, index) => (
         <EnhancedCard
           key={item.id}

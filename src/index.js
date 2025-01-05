@@ -20,6 +20,7 @@ root.render(
         {/* <Routes>
           <Route path="/" element={<App />} />
         </Routes> */}
+        <div className="p-4" ></div>
         <Routes>
           <Route index element={<App />} />
           <Route path="viewincident/:incidentId" element={<Incident incidentId={3} />} />
