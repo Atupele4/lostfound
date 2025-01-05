@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 const Incident = () => {
   const { incidentId } = useParams();
   const [items, setItems] = useState([]);
+  const [incidentDoc, setIncidentDoc] = useState([]);
   const [loading, setLoading] = useState(true);
   const { db } = useFirebase();
   const locationColors = {
@@ -18,7 +19,7 @@ const Incident = () => {
       try {
         const docRef = doc(db, "Items", incidentId);
         const docSnap = await getDoc(docRef);
-
+        setIncidentDoc(docSnap)
         if (docSnap.exists()) {
           const data = docSnap.data();
           setItems([data]); // Assuming data structure matches the `items` array
@@ -48,6 +49,7 @@ const Incident = () => {
           item={item}
           index={index}
           locationColors={locationColors}
+          incidentDoc={incidentDoc}
         />
       ))}
     </div>

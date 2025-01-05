@@ -8,7 +8,7 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs,updateDoc } from "firebase/firestore";
 import { useFirebase } from "../FirebaseContext";
 
 async function fetchNearbyTowns(lat, lng) {
@@ -146,7 +146,7 @@ function MapWithPinpoints({incidentPosition}) {
     <>
       <MapContainer
         center={incidentPosition}
-        zoom={13}
+        zoom={12}
         style={{ height: "400px", width: "100%" }}
       >
         <TileLayer
