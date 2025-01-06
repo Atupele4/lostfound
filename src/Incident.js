@@ -17,7 +17,7 @@ const Incident = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const docRef = doc(db, "Items", incidentId);
+        const docRef = doc(db, "Incidents", incidentId);
         const docSnap = await getDoc(docRef);
         setIncidentDoc(docSnap)
         if (docSnap.exists()) {

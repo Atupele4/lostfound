@@ -153,11 +153,11 @@ function ItemForm() {
         };
   
         // Add the new document to the "Items" collection
-        const docRef = await addDoc(collection(db, "Items"), docData);
+        const docRef = await addDoc(collection(db, "Incidents"), docData);
   
         // Upload files and get their URLs
         for (const file of formData.files) {
-          const fileRef = ref(storage, `${docRef.id}/${file.name}`);
+          const fileRef = ref(storage, `IncidentsPhotos/${docRef.id}/${file.name}`);
           await uploadBytes(fileRef, file);
           const fileUrl = await getDownloadURL(fileRef);
           fileUrls.push(fileUrl);

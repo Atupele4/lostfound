@@ -95,68 +95,7 @@ const UserProfile = () => {
     <Container className="user-profile mt-5">
       <Row className="justify-content-center">
         <Col md={6}>
-          <h2 className="text-center mb-4">User Profile</h2>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="username">
-              <Form.Label>Username</Form.Label>
-              <Form.Control
-                type="text"
-                name="username"
-                value={userDetails.username}
-                onChange={handleChange}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group controlId="email">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                value={userDetails.email}
-                onChange={handleChange}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group controlId="profilePicture">
-              <Form.Label>Profile Picture</Form.Label>
-              <Form.Control
-                type="file"
-                name="profilePicture"
-                accept="image/*"
-                onChange={handleFileChange}
-              />
-              {userDetails.profilePicture && (
-                <Image
-                  src={userDetails.profilePicture}
-                  alt="Profile Preview"
-                  roundedCircle
-                  className="mt-3"
-                  width={100}
-                  height={100}
-                />
-              )}
-            </Form.Group>
-
-            <Button
-              variant="primary"
-              type="submit"
-              className="w-100"
-              disabled={isUpdating}
-            >
-              {isUpdating ? (
-                <Spinner
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />
-              ) : (
-                "Update Profile"
-              )}
-            </Button>
-          </Form>
+          
         </Col>
         <Col>
           <MyincidenceList incidentids={incidentids} />

@@ -114,7 +114,7 @@ const EnhancedCard = ({ item, index, locationColors, incidentId,incidentDoc }) =
   const handleSaveLocation = async () => {
     if (pinLocation && currentUser && currentUser.uid === item.uid) {
       try {
-        const itemDoc = doc(db, "Items", incidentId);
+        const itemDoc = doc(db, "Incidents", incidentId);
 
         // Extract lat and lng as plain fields
         const locationData = {
@@ -164,6 +164,10 @@ const EnhancedCard = ({ item, index, locationColors, incidentId,incidentDoc }) =
                         thumbnail
                         onClick={() => handleImageClick(image)}
                         alt={`Item ${index + 1} - Image ${imageIndex + 1}`}
+                        onError={(e) => {
+                          e.target.onerror = null; // Prevent recursion in case the placeholder image is missing
+                          // e.target.src = "holder.js/171x180"; // Replace with the path to your placeholder image
+                        }}
                       />
                     </Col>
                   </Row>

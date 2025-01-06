@@ -35,7 +35,7 @@ function FileUploadModal({ incidentDoc }) {
     }
 
     const storage = getStorage();
-    const storageRef = ref(storage, `${incidentDoc.id}/${file.name}`);
+    const storageRef = ref(storage, `IncidentsPhotos/${incidentDoc.id}/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     // Upload files and get their URLs
@@ -65,7 +65,7 @@ function FileUploadModal({ incidentDoc }) {
         setDownloadURL(url);
 
         try {
-          const docRef = doc(db, "Items", incidentDoc.id);
+          const docRef = doc(db, "Incidents", incidentDoc.id);
           const docSnap = await getDoc(docRef);
         
           let urls = docSnap.data().imagePaths;

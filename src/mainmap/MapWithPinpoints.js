@@ -118,10 +118,9 @@ function MapWithPinpoints({incidentPosition}) {
   };
 
   useEffect(() => {
-    console.log("Incident Position: ", incidentPosition);
     const fetchItemsWithLocations = async () => {
       try {
-        const itemsRef = collection(db, "Items");
+        const itemsRef = collection(db, "Incidents");
         const querySnapshot = await getDocs(itemsRef);
 
         const itemsWithLocations = querySnapshot.docs

@@ -34,7 +34,7 @@ function DataGrid({handleShowOnMapClick}) {
   const fetchItems = useCallback(
     async (nextPage = false) => {
       try {
-        const itemsRef = collection(db, "Items");
+        const itemsRef = collection(db, "Incidents");
         let q;
 
         if (nextPage && lastDoc) {
