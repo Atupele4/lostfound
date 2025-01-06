@@ -1,7 +1,7 @@
 # Lostfound Project
 
 
-Welcome to My Lostfound Project! 🎒💡
+Welcome to the Lostfound Project! 🎒💡
 
 This application project is designed to help users effortlessly report, search for, and manage lost and found items. Whether it's a misplaced wallet, a lost phone, or a forgotten umbrella, this project provides a streamlined solution to connect people and their belongings.
 
