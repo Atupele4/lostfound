@@ -91,6 +91,8 @@ function App() {
       <div className="m-1">
         <DataGrid handleShowOnMapClick={handleShowOnMapClick} />
       </div>
+
+
     </>
   );
 }

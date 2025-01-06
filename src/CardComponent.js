@@ -51,7 +51,7 @@ const CardComponent = ({ item, index, locationColors,handleShowOnMapClick }) => 
       setIsDeleting(true);
       try {
         // Deleting item from Firestore
-        await deleteDoc(doc(db, "Items", item.id));
+        await deleteDoc(doc(db, "Incidents", item.id));
         alert("Item deleted successfully.");
         setShowDeleteModal(false); // Close modal after deletion
       } catch (error) {

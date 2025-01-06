@@ -12,13 +12,14 @@ import { getDownloadURL, ref, getStorage } from "firebase/storage";
 import { useFirebase } from "./FirebaseContext";
 import CardComponent from "./CardComponent";
 
-function DataGrid({handleShowOnMapClick}) {
+function DataGrid({ handleShowOnMapClick }) {
   const { db } = useFirebase();
   const storage = getStorage(); // Initialize Firebase Storage
   const [items, setItems] = useState([]); // Stores the fetched items
   const [lastDoc, setLastDoc] = useState(null); // Stores the last document for pagination
   const [hasMore, setHasMore] = useState(true); // Determines if more pages exist
   const ITEMS_PER_PAGE = 20; // Number of items per page
+  const [loading, setLoading] = useState(false);
 
   const locationColors = {
     Lusaka: "border-primary",
@@ -33,6 +34,7 @@ function DataGrid({handleShowOnMapClick}) {
   // Use useCallback to memoize fetchItems function to avoid unnecessary re-creations
   const fetchItems = useCallback(
     async (nextPage = false) => {
+      setLoading(true);
       try {
         const itemsRef = collection(db, "Incidents");
         let q;
@@ -84,6 +86,8 @@ function DataGrid({handleShowOnMapClick}) {
         setHasMore(querySnapshot.docs.length === ITEMS_PER_PAGE); // Check if there's more data
       } catch (error) {
         console.error("Error fetching items: ", error);
+      } finally {
+        setLoading(false);
       }
     },
     [db, lastDoc, storage]
@@ -96,6 +100,10 @@ function DataGrid({handleShowOnMapClick}) {
   return (
     <div>
       <div className="d-flex flex-wrap gap-3 justify-content-center mt-3">
+        {items.length === 0 && !loading && (
+          <p className="text-center">No items found. Try again later.</p>
+        )}
+
         {items.map((item, index) => (
           <CardComponent
             key={item.id}
@@ -108,9 +116,10 @@ function DataGrid({handleShowOnMapClick}) {
       </div>
       <div className="d-flex justify-content-center mt-3">
         <Button
+          id="load-more-button"
           variant="primary"
           onClick={() => fetchItems(true)}
-          disabled={!hasMore}
+          disabled={!hasMore || loading}
         >
           Load More
         </Button>

@@ -11,3 +11,29 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Ensure the entire viewport is used */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+/* Container for the entire page */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Content area should grow to fill available space */
+.content-wrap {
+  flex: 1;
+}
+
+/* Footer styling */
+.footer {
+  background-color: #343a40; /* Dark background */
+  color: white;
+  text-align: center;
+  padding: 1rem 0;
+}

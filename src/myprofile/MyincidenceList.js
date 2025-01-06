@@ -57,7 +57,7 @@ const MyIncidenceList = ({ incidentids = [] }) => {
         }
 
         // Deleting item from Firestore
-        await deleteFirestoreDocument("Items", SelectedIncident.id);
+        await deleteFirestoreDocument("Incidents", SelectedIncident.id);
         setShowDeleteModal(false); // Close modal after deletion
       } catch (error) {
         console.error("Error deleting document: ", error);
