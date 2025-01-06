@@ -3,12 +3,12 @@
 
 Welcome to My Lostfound Project! 🎒💡
 
-This application project is designed to help users report, search for, and manage lost and found items effortlessly. Whether it's a misplaced wallet, a lost phone, or a forgotten umbrella, this project provides a streamlined solution to connect people and their belongings.
+This application project is designed to help users effortlessly report, search for, and manage lost and found items. Whether it's a misplaced wallet, a lost phone, or a forgotten umbrella, this project provides a streamlined solution to connect people and their belongings.
 
 ### Features:
 - **Report Lost Items:** Submit details about lost items with tags, descriptions, and dates.
 - **Browse Found Items:** Explore a list of found items to check if your missing item has been located.
-- **User-Friendly Interface:** A responsive design for smooth navigation and accessibility ( 😁 am work in progress in the UX space ) .
+- **User-Friendly Interface:** A responsive design for smooth navigation and accessibility ( 😁 am a work in progress in the UX space ).
 
 Check out the repository to learn more, and feel free to contribute or suggest improvements! 🚀
 
@@ -66,7 +66,7 @@ Before starting, ensure you have the following installed:
 
 6. Open your browser and navigate to `http://localhost:3000` to view the application.
 
-## Application Objects in firebase Collections
+## Application Objects in Firebase Collections
 
 ### User Object
 
@@ -111,7 +111,7 @@ Before starting, ensure you have the following installed:
 
 ### Incident Object
 
-- This is a user onject
+- This is a user object
 - "uid" is the Firebase Auth uid added to the Users Collection.
 
   ```json
