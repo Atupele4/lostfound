@@ -26,7 +26,10 @@ function MapView({ position }) {
 function App() {
   const [currentPosition, setCurrentPosition] = useState([51.505, -0.09]); // Default location
   const [clickedPosition, setClickedPosition] = useState(null);
-  const [incidentPosition, setIncidentPosition] = useState({ lat: -15.3875, lng: 28.3228 });
+  const [incidentPosition, setIncidentPosition] = useState({
+    lat: -15.3875,
+    lng: 28.3228,
+  });
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -45,7 +48,6 @@ function App() {
       }
     );
   }, []);
-
 
   const handleShowOnMapClick = (receivedPosition) => {
     setIncidentPosition(receivedPosition);
@@ -86,7 +88,9 @@ function App() {
         </Modal.Footer>
       </Modal>
 
-      <DataGrid handleShowOnMapClick={handleShowOnMapClick} />
+      <div className="m-1">
+        <DataGrid handleShowOnMapClick={handleShowOnMapClick} />
+      </div>
     </>
   );
 }

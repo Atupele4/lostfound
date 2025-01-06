@@ -186,7 +186,7 @@ function MapWithPinpoints({incidentPosition}) {
       )}
       </MapContainer>
 
-      {clickedPosition && (
+      {/* {clickedPosition && (
         <div>
           <h5>Nearby Town:</h5>
           <ul>
@@ -197,7 +197,7 @@ function MapWithPinpoints({incidentPosition}) {
             ))}
           </ul>
         </div>
-      )}
+      )} */}
     </>
   );
 }
