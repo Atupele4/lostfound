@@ -54,14 +54,26 @@ function TopNavBar() {
   };
 
   return (
-    <Navbar expand="lg" className="bg-body-tertiary" fixed="top">
+    <>
+      {/* <Navbar expand="lg" className="bg-body-tertiary justify-content-end">
       <Container>
         <Navbar.Brand as={NavLink} to="/">
           LostFound
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
+    
+
+      </Container>
+    </Navbar> */}
+
+      <Navbar bg="dark" data-bs-theme="dark" className="justify-content-between mr-1">
+        {/* <Navbar.Brand href="#home">Navbar with text</Navbar.Brand> */}
+        <Navbar.Toggle />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
+          <Nav>
+            <Navbar.Brand as={NavLink} to="/">
+              LostFound
+            </Navbar.Brand>
             <Nav.Link as={NavLink} to="/myprofile">
               My Profile
             </Nav.Link>
@@ -79,10 +91,11 @@ function TopNavBar() {
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>
-
-        <LoginState userName={userName} />
-      </Container>
-    </Navbar>
+        <Navbar.Collapse className="justify-content-end">
+          <LoginState userName={userName + " "} />{" "}
+        </Navbar.Collapse>
+      </Navbar>
+    </>
   );
 }
 

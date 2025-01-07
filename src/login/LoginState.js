@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 
-const LoginState = ({userName}) => {
+const LoginState = ({ userName }) => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate(); // Hook to navigate after logout
 
@@ -34,20 +34,21 @@ const LoginState = ({userName}) => {
   };
 
   return (
-    <Navbar.Collapse className="justify-content-end">
-      <Navbar.Text>
+    <>
+      <Navbar.Text className="justify-content-end m-1 p-1">
         {user ? (
           <>
             {/* Dropdown menu for logged-in user */}
-            <NavDropdown title={`Signed in as: ${userName || 'User'}`} id="navbarScrollingDropdown">
+            <NavDropdown
+              title={`Signed in as: ${userName || "User"}`}
+              id="navbarScrollingDropdown"
+            >
               <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
               <NavDropdown.Item href="#action4">
                 Another action
               </NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item onClick={handleLogout}>
-                Logout
-              </NavDropdown.Item>
+              <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
             </NavDropdown>
           </>
         ) : (
@@ -55,7 +56,7 @@ const LoginState = ({userName}) => {
           <NavLink to="/login">Login</NavLink>
         )}
       </Navbar.Text>
-    </Navbar.Collapse>
+    </>
   );
 };
 

@@ -14,44 +14,43 @@ import ItemForm from "./ItemForm";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>
-  <React.StrictMode>
-    <FirebaseProvider>
-      <div className="page-container">
-        <TopNavBar />
-        <div className="content-wrap">
-          <div className="p-4"></div>
-          <Routes>
-            <Route index element={<App />} />
-            <Route
-              path="viewincident/:incidentId"
-              element={<Incident incidentId={3} />}
-            />
-            <Route path="myprofile/" element={<UserProfile />} />
-            <Route path="postincident/" element={<ItemForm />} />
-            <Route path="signup/" element={<Signup />} />
-            <Route path="login/" element={<Login />} />
-          </Routes>
+    <React.StrictMode>
+      <FirebaseProvider>
+        <div className="page-container">
+          <TopNavBar />
+          <div className="content-wrap">
+            <div className="p-4"></div>
+            <Routes>
+              <Route index element={<App />} />
+              <Route
+                path="viewincident/:incidentId"
+                element={<Incident incidentId={3} />}
+              />
+              <Route path="myprofile/" element={<UserProfile />} />
+              <Route path="postincident/" element={<ItemForm />} />
+              <Route path="signup/" element={<Signup />} />
+              <Route path="login/" element={<Login />} />
+            </Routes>
+          </div>
+          {/* Footer */}
+          <footer className="footer bg-info-subtle text-black text-center py-3">
+            <p className="mb-0">
+              © 2025 Lostfound Project. All rights reserved. | Built with ❤️ by
+              Atupele Mboya. Follow us on{" "}
+              <a
+                href="https://github.com/Atupele4/lostfound.git"
+                target="_blank"
+                rel="noreferrer"
+              >
+                GitHub
+              </a>
+              .
+            </p>
+          </footer>
         </div>
-        {/* Footer */}
-        <footer className="footer bg-info-subtle text-black text-center py-3">
-          <p className="mb-0">
-            © 2025 Lostfound Project. All rights reserved.
-            | Built with ❤️ by Atupele Mboya. Follow us on{" "}
-            <a
-              href="https://github.com/Atupele4/lostfound.git"
-              target="_blank"
-              rel="noreferrer"
-            >
-              GitHub
-            </a>
-            .
-          </p>
-        </footer>
-      </div>
-    </FirebaseProvider>
-  </React.StrictMode>
-</BrowserRouter>
-
+      </FirebaseProvider>
+    </React.StrictMode>
+  </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function
