@@ -5,8 +5,10 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getAuth } from "firebase/auth";
 import { useFirebase } from "./FirebaseContext";
 import { firestore } from 'firebase/app';
+import IncidentTags from "./incident/incidentform/IncidentTags";
 
 function ItemForm() {
+  const [selectedTags, setSelectedTags] = useState([]);
   const predefinedTags = [
     "Wallets",
     "Keys",
@@ -96,7 +98,7 @@ function ItemForm() {
     setFormData({ ...formData, files: validFiles });
   };
 
-  const toggleTag = (tag) => {
+  const handleTagsChange = (tag) => {
     setFormData((prevState) => {
       const tags = prevState.tags.includes(tag)
         ? prevState.tags.filter((t) => t !== tag)
@@ -197,25 +199,8 @@ function ItemForm() {
           <Col>
             <h2 className="text-center mb-4">Incidence Report</h2>
             <Form>
-              <Form.Group className="mb-3" controlId="formTags">
-                <Form.Label>Incident Tag</Form.Label>
-                <div className="d-flex flex-wrap gap-2">
-                  {predefinedTags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      pill
-                      className={`p-2 cursor-pointer ${
-                        formData.tags.includes(tag)
-                          ? "bg-primary text-white"
-                          : "bg-light text-dark"
-                      }`}
-                      onClick={() => toggleTag(tag)}
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              </Form.Group>
+
+              <IncidentTags onTagsChange={handleTagsChange} />
 
               <Form.Group className="mb-3" controlId="formDescription">
                 <Form.Label>Description</Form.Label>
