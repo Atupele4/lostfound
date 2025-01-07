@@ -124,6 +124,17 @@ const CardComponent = ({ item, index, locationColors,handleShowOnMapClick }) => 
           {/* <strong>Phone Number:</strong> {item.phoneNumber || "N/A"} */}
         </Card.Text>
         <Row>
+          <Col md="auto">
+              {/* View Button */}
+              <Button
+            size="sm"
+            variant="primary"
+            className=""
+            onClick={handleViewClick}
+          >
+            View
+          </Button>
+          </Col>
           <Col xs="7" md="auto">
             {item.locationLngLat && (
               <Button className="" size="sm" onClick={handleShowOnMap}>
@@ -162,27 +173,7 @@ const CardComponent = ({ item, index, locationColors,handleShowOnMapClick }) => 
         </Row>
 
         <div className="d-flex gap-2">
-          {/* View Button */}
-          <Button
-            size="sm"
-            variant="primary"
-            className="mt-2"
-            onClick={handleViewClick}
-          >
-            View
-          </Button>
-          {/* Delete Button (only shown if current user is the one who submitted the item) */}
-
-          {currentUser && item.uid === currentUser.uid && (
-            <Button
-              size="sm"
-              variant="danger"
-              onClick={handleDeleteClick}
-              className="mt-2"
-            >
-              Delete
-            </Button>
-          )}
+      
         </div>
       </Card.Body>
 

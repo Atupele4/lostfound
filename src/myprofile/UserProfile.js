@@ -94,9 +94,6 @@ const UserProfile = () => {
   return (
     <Container className="user-profile mt-5">
       <Row className="justify-content-center">
-        <Col md={6}>
-          
-        </Col>
         <Col>
           <MyincidenceList incidentids={incidentids} />
         </Col>
