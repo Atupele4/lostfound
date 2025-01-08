@@ -3,10 +3,9 @@ import { Form, Badge } from "react-bootstrap";
 import { useFirebase } from "../../FirebaseContext";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 
-const IncidentTags = ({ onTagsChange }) => {
+const IncidentTags = ({ onTagsChange, selectedTags, tagError }) => {
   const [tags, setTags] = useState([]); // Tags fetched from Firestore
   const [newTag, setNewTag] = useState(""); // New tag input value
-  const [formData, setFormData] = useState({ tags: [] }); // Selected tags
   const { db } = useFirebase();
 
   const predefinedTags = [
@@ -34,16 +33,7 @@ const IncidentTags = ({ onTagsChange }) => {
   ];
 
   const toggleTag = (tag) => {
-    setFormData((prevState) => {
-      const tags = prevState.tags.includes(tag)
-        ? prevState.tags.filter((t) => t !== tag)
-        : [...prevState.tags, tag];
-
-      // Notify parent of updated tags
-      onTagsChange(tag);
-
-      return { ...prevState, tags };
-    });
+    onTagsChange(tag); // Notify parent of updated tag selection
   };
 
   useEffect(() => {
@@ -61,43 +51,29 @@ const IncidentTags = ({ onTagsChange }) => {
     fetchTags();
   }, [db]);
 
-  const handleAddTag = async () => {
-    try {
-      if (newTag.trim() === "") return;
-
-      const tagsRef = collection(db, "tags");
-      await addDoc(tagsRef, { name: newTag });
-
-      // Clear input field and update tags state
-      setNewTag("");
-      setTags((prevTags) => [...prevTags, { name: newTag }]);
-    } catch (error) {
-      console.error("Error adding tag:", error);
-    }
-  };
-
   return (
-    <>
-      <Form.Group className="mb-3" controlId="formTags">
-        <Form.Label>Incident Tags</Form.Label>
-        <div className="d-flex flex-wrap gap-2">
-          {predefinedTags.map((tag) => (
-            <Badge
-              key={tag}
-              pill
-              className={`p-2 cursor-pointer ${
-                formData.tags.includes(tag)
-                  ? "bg-primary text-white"
-                  : "bg-light text-dark"
-              }`}
-              onClick={() => toggleTag(tag)}
-            >
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      </Form.Group>
-    </>
+    <Form.Group className="mb-3" controlId="formTags">
+      <Form.Label>Incident Tags</Form.Label>
+      <div className="d-flex flex-wrap gap-2">
+        {predefinedTags.map((tag) => (
+          <Badge
+            key={tag}
+            pill
+            className={`p-2 cursor-pointer ${
+              selectedTags.includes(tag)
+                ? "bg-primary text-white" // Highlight selected tag
+                : "bg-light text-dark"
+            }`}
+            onClick={() => toggleTag(tag)}
+          >
+            {tag}
+          </Badge>
+        ))}
+      </div>
+      {tagError && (
+        <Form.Text className="text-danger">{tagError}</Form.Text>
+      )}
+    </Form.Group>
   );
 };
 

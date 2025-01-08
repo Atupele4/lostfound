@@ -1,11 +1,19 @@
 import { useState } from "react";
 import { Form, Button, Badge, Container, Row, Col } from "react-bootstrap";
-import { collection,doc, addDoc, updateDoc,arrayUnion } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  addDoc,
+  updateDoc,
+  arrayUnion,
+} from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getAuth } from "firebase/auth";
 import { useFirebase } from "./FirebaseContext";
-import { firestore } from 'firebase/app';
+import { firestore } from "firebase/app";
 import IncidentTags from "./incident/incidentform/IncidentTags";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import ToggleButton from "react-bootstrap/ToggleButton";
 
 function ItemForm() {
   const [selectedTags, setSelectedTags] = useState([]);
@@ -59,6 +67,13 @@ function ItemForm() {
     "Petauke",
     "Kaoma",
     "Mbala",
+  ];
+  const [checked, setChecked] = useState(false);
+  const [incidentType, setIncidentType] = useState(0);
+  const radios = [
+    { name: "Lost", value: "1" },
+    { name: "Found", value: "2" },
+    { name: "Theft", value: "3" },
   ];
 
   const { db } = useFirebase();
@@ -124,7 +139,13 @@ function ItemForm() {
       newErrors.phoneNumber = "Phone number must be 10 digits.";
     }
 
+    if (incidentType === 0)
+      newErrors.incidentType = "Incident type is required.";
+
     if (!formData.location) newErrors.location = "Location is required.";
+
+    if (formData.tags.length === 0)
+      newErrors.tags = "At least one tag is required.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -135,14 +156,14 @@ function ItemForm() {
       try {
         const auth = getAuth();
         const currentUser = auth.currentUser;
-  
+
         if (!currentUser) {
           alert("You must be logged in to submit an item.");
           return;
         }
-  
+
         const fileUrls = [];
-  
+
         const docData = {
           uid: currentUser.uid,
           tags: formData.tags,
@@ -150,32 +171,36 @@ function ItemForm() {
           location: formData.location,
           dateLost: formData.dateLost,
           phoneNumber: formData.phoneNumber,
+          incidentType: incidentType,
           status: "Unclaimed",
           imagePaths: [],
         };
-  
+
         // Add the new document to the "Items" collection
         const docRef = await addDoc(collection(db, "Incidents"), docData);
-  
+
         // Upload files and get their URLs
         for (const file of formData.files) {
-          const fileRef = ref(storage, `IncidentsPhotos/${docRef.id}/${file.name}`);
+          const fileRef = ref(
+            storage,
+            `IncidentsPhotos/${docRef.id}/${file.name}`
+          );
           await uploadBytes(fileRef, file);
           const fileUrl = await getDownloadURL(fileRef);
           fileUrls.push(fileUrl);
         }
-  
+
         // Update the document with the file URLs
         await updateDoc(docRef, {
           imagePaths: fileUrls,
         });
-  
+
         // Update the "Users" collection to include the new doc ID in the incidents array
         const userDocRef = doc(db, "Users", currentUser.uid);
         await updateDoc(userDocRef, {
           incidents: arrayUnion(docRef.id),
         });
-  
+
         alert("Form submitted successfully.");
         setFormData({
           description: "",
@@ -199,8 +224,39 @@ function ItemForm() {
           <Col>
             <h2 className="text-center mb-4">Incidence Report</h2>
             <Form>
+              <Form.Group className="mb-3" controlId="formIncidentType">
+                <Form.Label>Select Incident Type</Form.Label>
+                <br />
+                <ButtonGroup>
+                  {radios.map((radio, idx) => (
+                    <ToggleButton
+                      key={idx}
+                      id={`radio-${idx}`}
+                      type="radio"
+                      variant={idx % 2 ? "outline-success" : "outline-danger"}
+                      name="radio"
+                      value={radio.value}
+                      checked={incidentType === radio.value}
+                      onChange={(e) => setIncidentType(e.currentTarget.value)}
+                    >
+                      {radio.name}
+                    </ToggleButton>
+                  ))}
+                </ButtonGroup>
+                <br />
+                {/* Validation message */}
+                {errors.incidentType && (
+                  <Form.Text className="text-danger">
+                    {errors.incidentType}
+                  </Form.Text>
+                )}
+              </Form.Group>
 
-              <IncidentTags onTagsChange={handleTagsChange} />
+              <IncidentTags
+                onTagsChange={handleTagsChange}
+                selectedTags={formData.tags}
+                tagError={errors.tags}
+              />
 
               <Form.Group className="mb-3" controlId="formDescription">
                 <Form.Label>Description</Form.Label>
