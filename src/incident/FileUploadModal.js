@@ -35,7 +35,10 @@ function FileUploadModal({ incidentDoc }) {
     }
 
     const storage = getStorage();
-    const storageRef = ref(storage, `IncidentsPhotos/${incidentDoc.id}/${file.name}`);
+    const storageRef = ref(
+      storage,
+      `IncidentsPhotos/${incidentDoc.id}/${file.name}`
+    );
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     // Upload files and get their URLs
@@ -67,20 +70,16 @@ function FileUploadModal({ incidentDoc }) {
         try {
           const docRef = doc(db, "Incidents", incidentDoc.id);
           const docSnap = await getDoc(docRef);
-        
+
           let urls = docSnap.data().imagePaths;
-          if(urls === undefined) {
+          if (urls === undefined) {
             urls = [];
           }
-          console.log(docSnap.data().imagePaths)
           urls.push(url);
-        //   console.log(urls);
-
           //   Update the document with the file URLs
           await updateDoc(docRef, {
             imagePaths: urls,
           });
-          alert("Form submitted successfully.");
         } catch (error) {
           console.error("Error fetching document:", error);
         }
