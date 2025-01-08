@@ -11,6 +11,8 @@ import {
 import { getDownloadURL, ref, getStorage } from "firebase/storage";
 import { useFirebase } from "./FirebaseContext";
 import CardComponent from "./CardComponent";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 
 function DataGrid({ handleShowOnMapClick }) {
   const { db } = useFirebase();
@@ -104,15 +106,21 @@ function DataGrid({ handleShowOnMapClick }) {
           <p className="text-center">No items found. Try again later.</p>
         )}
 
-        {items.map((item, index) => (
-          <CardComponent
-            key={item.id}
-            item={item}
-            index={index}
-            locationColors={locationColors}
-            handleShowOnMapClick={handleShowOnMapClick}
-          />
-        ))}
+        {/* <CardGroup> */}
+          {items.map((item, index) => (
+            <Row xs={1} md={2} className="g-4">
+              <Col key={index}>
+                <CardComponent
+                  key={item.id}
+                  item={item}
+                  index={index}
+                  locationColors={locationColors}
+                  handleShowOnMapClick={handleShowOnMapClick}
+                />
+              </Col>
+            </Row>
+          ))}
+        {/* </CardGroup> */}
       </div>
       <div className="d-flex justify-content-center mt-3">
         <Button

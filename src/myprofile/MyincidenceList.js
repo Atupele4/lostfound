@@ -154,7 +154,7 @@ const MyIncidenceList = ({ incidentids = [] }) => {
                       </Dropdown.Toggle>
 
                       <Dropdown.Menu>
-                        <Dropdown.Item href="#/action-1">Edit</Dropdown.Item>
+                        {/* <Dropdown.Item href="#/action-1">Edit</Dropdown.Item> */}
                         <Dropdown.Item
                           onClick={() => handleDeleteClick(data)}
                           href="#/action-2"
