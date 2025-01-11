@@ -25,6 +25,7 @@ import Image from "react-bootstrap/Image";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import FileUploadModal from "./incident/FileUploadModal";
+import CardGroup from "react-bootstrap/CardGroup";
 
 const EnhancedCard = ({
   item,
@@ -141,62 +142,19 @@ const EnhancedCard = ({
           // Set width and center the card
           className={`shadow-sm border-light`}
         >
-          <div className="d-flex flex-wrap">
-            {(item.imagePaths?.length > 0 || uploadedImages.length > 0) && (
-              <>
-                {item.imagePaths.map((image, imageIndex) => (
-                  <Row>
-                    <Col xs={6} md={4}>
-                      <Image
-                        src={image}
-                        thumbnail
-                        onClick={() => handleImageClick(image)}
-                        alt={`Item ${index + 1} - Image ${imageIndex + 1}`}
-                        onError={(e) => {
-                          e.target.onerror = null; // Prevent recursion in case the placeholder image is missing
-                          // e.target.src = "holder.js/171x180"; // Replace with the path to your placeholder image
-                        }}
-                      />
-                    </Col>
-                  </Row>
-                ))}
-                {uploadedImages.map((image, imageIndex) => (
-                  <Card
-                    key={`uploaded-${imageIndex}`}
-                    style={{ width: "200px", margin: "10px" }}
-                    className="shadow-sm"
-                    onClick={() => handleImageClick(image)} // On click, show the modal
-                  >
-                    <Card.Img
-                      variant="top"
-                      src={image}
-                      alt={`Uploaded Image ${imageIndex + 1}`}
-                      style={{
-                        height: "200px",
-                        width: "200px",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </Card>
-                ))}
-              </>
-            )}
-
-            {/* Modal to display large image */}
-            <Modal show={showModal} onHide={handleCloseModal} centered>
-              <Modal.Header closeButton>
-                <Modal.Title>Image</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <img
-                  src={modalImage}
-                  alt="Large view"
-                  style={{ width: "100%", height: "auto" }} // Responsive and large image
-                />
-              </Modal.Body>
-            </Modal>
-          </div>
-
+          {/* Modal to display large image */}
+          <Modal show={showModal} onHide={handleCloseModal} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Image</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <img
+                src={modalImage}
+                alt="Large view"
+                style={{ width: "100%", height: "auto" }} // Responsive and large image
+              />
+            </Modal.Body>
+          </Modal>
           <Card.Body>
             <Card.Title>
               #{index + 1}:{" "}
@@ -205,12 +163,34 @@ const EnhancedCard = ({
             <Card.Subtitle className="mb-2 text-muted">
               {item.status || "Unclaimed"}
             </Card.Subtitle>
+            {(item.imagePaths?.length > 0 || uploadedImages.length > 0) && (
+              <>
+                {item.imagePaths.map((image, imageIndex) => (
+                  <Image
+                    src={image}
+                    thumbnail
+                    onClick={() => handleImageClick(image)}
+                    alt={`Item ${index + 1} - Image ${imageIndex + 1}`}
+                    onError={(e) => {
+                      e.target.onerror = null; // Prevent recursion in case the placeholder image is missing
+                      e.target.src = "holder.js/171x180"; // Replace with the path to your placeholder image
+                    }}
+                    style={{
+                      width: "200px", // Set the desired width
+                      height: "200px", // Set the desired height
+                      objectFit: "cover", // Ensure the image scales proportionally to fit the size
+                    }}
+                  />
+                ))}
+              </>
+            )}
             <Card.Text>
               <strong>Description:</strong> {item.description || "N/A"} <br />
               <strong>Location:</strong> {item.locationLngLat?.lat || "N/A"},{" "}
               {item.locationLngLat?.lng || "N/A"} <br />
-              <strong>Location Lost:</strong> {item.location || "N/A"} <br />
-              <strong>Date Lost:</strong> {item.dateLost || "N/A"} <br />
+              <strong>Incident Location:</strong> {item.location || "N/A"}{" "}
+              <br />
+              <strong>Incident Date:</strong> {item.dateLost || "N/A"} <br />
               <strong>Date Found:</strong> {item.dateFound || "N/A"} <br />
               <strong>Phone Number:</strong> {item.phoneNumber || "N/A"}
             </Card.Text>
