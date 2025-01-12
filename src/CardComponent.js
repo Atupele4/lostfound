@@ -4,8 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth"; // Import Firebase Auth
 import { deleteDoc, doc } from "firebase/firestore"; // Import Firestore delete functions
 import { useFirebase } from "./FirebaseContext"; // Firebase context for access to db
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
+import { Col, Row, Toast } from "react-bootstrap";
+import { FcMoneyTransfer } from "react-icons/fc";
+
 // Predefined tags and their corresponding colors
 const tagColors = {
   Wallets: "#007bff", // Blue
@@ -41,6 +42,7 @@ const CardComponent = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false); // Modal visibility state
   const [isDeleting, setIsDeleting] = useState(false); // Deletion in progress state
   const currentUser = getAuth().currentUser; // Get current authenticated user
+  const [showToast, setShowToast] = useState(false);
 
   const handleViewClick = () => {
     navigate(`/viewincident/${item.id}`);
@@ -48,6 +50,14 @@ const CardComponent = ({
 
   const handleDeleteClick = () => {
     setShowDeleteModal(true); // Show the confirmation modal
+  };
+
+  const handleMouseEnter = () => {
+    setShowToast(true);
+  };
+
+  const handleMouseLeave = () => {
+    setShowToast(false);
   };
 
   const handleConfirmDelete = async () => {
@@ -162,6 +172,29 @@ const CardComponent = ({
                   <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2M14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1M2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1z" />
                 </svg>
               ) : null}
+            </Col>
+            <Col>
+              {item.reward === true && (
+                <div
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                  style={{ position: "relative" }}
+                >
+                  <FcMoneyTransfer size={25} />
+                  {showToast && (
+                    <Toast
+                      style={{
+                        position: "absolute",
+                        top: "30px",
+                        left: "0",
+                        zIndex: 1050,
+                      }}
+                    >
+                      <Toast.Body>This is your reward!</Toast.Body>
+                    </Toast>
+                  )}
+                </div>
+              )}
             </Col>
           </Row>
         </Card.Footer>

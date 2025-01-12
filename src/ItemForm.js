@@ -173,6 +173,7 @@ function ItemForm() {
           phoneNumber: formData.phoneNumber,
           incidentType: incidentType,
           status: "Unclaimed",
+          reward: false,
           imagePaths: [],
         };
 
