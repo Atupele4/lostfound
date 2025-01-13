@@ -7,16 +7,10 @@ import {
   Circle,
   useMapEvents,
 } from "react-leaflet";
-import CommentComponent from "./CommentComponent";
-import Comments from "./Comments";
 import { getAuth } from "firebase/auth"; // Firebase Auth
 import {
   deleteDoc,
   doc,
-  collection,
-  getDocs,
-  query,
-  where,
   updateDoc,
 } from "firebase/firestore"; // Firestore functions
 import { useFirebase } from "./FirebaseContext"; // Firebase context
@@ -25,7 +19,6 @@ import Image from "react-bootstrap/Image";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import FileUploadModal from "./incident/FileUploadModal";
-import CardGroup from "react-bootstrap/CardGroup";
 
 const EnhancedCard = ({
   item,
@@ -72,18 +65,7 @@ const EnhancedCard = ({
         // Delete item from Items collection
         await deleteDoc(doc(db, "Items", item.id));
 
-        // Delete associated comments from the Comments collection
-        const commentsQuery = query(
-          collection(db, "comments"),
-          where("incidentId", "==", item.id)
-        );
-        const querySnapshot = await getDocs(commentsQuery);
-
-        querySnapshot.forEach(async (docSnap) => {
-          await deleteDoc(doc(db, "comments", docSnap.id)); // Delete each comment document
-        });
-
-        alert("Item and associated comments deleted successfully.");
+        // alert("Item and associated comments deleted successfully.");
         setShowDeleteModal(false); // Close modal after deletion
       } catch (error) {
         console.error("Error deleting item or comments: ", error);

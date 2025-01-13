@@ -4,7 +4,11 @@ import { doc, getDoc, getFirestore } from "firebase/firestore";
 import Dropdown from "react-bootstrap/Dropdown";
 import { Button, Modal } from "react-bootstrap";
 import { getAuth } from "firebase/auth"; // Import Firebase Auth
-import { deleteFirestoreDocument, deleteFolder } from "../utils/AppUtils"; // Import Firestore delete functions
+import {
+  deleteFirestoreDocument,
+  deleteFolder,
+  getDocumentsByIds,
+} from "../utils/AppUtils"; // Import Firestore delete functions
 
 const MyIncidenceList = ({ incidentids = [] }) => {
   const db = getFirestore();
@@ -50,13 +54,12 @@ const MyIncidenceList = ({ incidentids = [] }) => {
     if (currentUser && currentUser.uid === SelectedIncident.uid) {
       setIsDeleting(true);
       try {
+        //Delete Incident Images folder from storage
         if (SelectedIncident.imagePaths.length > 0) {
-          SelectedIncident.imagePaths.map(async (imagePath) => {
-            await deleteFolder(SelectedIncident.id);
-          });
+          await deleteFolder(SelectedIncident.id);
         }
 
-        // Deleting item from Firestore
+        // Deleting Incident entry from Firestore
         await deleteFirestoreDocument("Incidents", SelectedIncident.id);
 
         // Update the state to remove the deleted incident
@@ -69,30 +72,13 @@ const MyIncidenceList = ({ incidentids = [] }) => {
         setShowDeleteModal(false); // Close modal after deletion
       } catch (error) {
         console.error("Error deleting document: ", error);
-        alert("Error deleting item.");
       } finally {
         setIsDeleting(false);
       }
     } else {
-      // alert("You cannot delete an item you did not submit.");
+      alert("You cannot delete an item you did not submit.");
     }
   };
-
-  // Function to fetch documents by IDs
-  async function getDocumentsByIds(collectionName, documentIds) {
-    try {
-      const promises = documentIds.map((id) =>
-        getDoc(doc(db, collectionName, id))
-      );
-      const snapshots = await Promise.all(promises);
-      return snapshots
-        .filter((snapshot) => snapshot.exists())
-        .map((snapshot) => ({ id: snapshot.id, ...snapshot.data() }));
-    } catch (error) {
-      console.error("Error fetching documents:", error);
-      return [];
-    }
-  }
 
   useEffect(() => {
     if (incidentids.length > 0) {
