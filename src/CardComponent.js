@@ -6,7 +6,7 @@ import { deleteDoc, doc } from "firebase/firestore"; // Import Firestore delete 
 import { useFirebase } from "./FirebaseContext"; // Firebase context for access to db
 import { Col, Row, Toast } from "react-bootstrap";
 import { FcMoneyTransfer } from "react-icons/fc";
-
+import { GiNinjaMask } from "react-icons/gi";
 // Predefined tags and their corresponding colors
 const tagColors = {
   Wallets: "#007bff", // Blue
@@ -126,8 +126,8 @@ const CardComponent = ({
           </Card.Text>
         </Card.Body>
         <Card.Footer>
-          <Row xs={1} md={2} className="g-4">
-            <Col md="auto">
+          <Row xs={2} md={4} className="g-4">
+         
               {/* View Button */}
               <Button
                 size="sm"
@@ -137,14 +137,14 @@ const CardComponent = ({
               >
                 View
               </Button>
-            </Col>
-            <Col md="auto">
+  
+            
               {item.locationLngLat && (
                 <Button className="" size="sm" onClick={handleShowOnMap}>
                   Map
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="16"
+                    // width="16"
                     height="16"
                     fill="currentColor"
                     class="bi bi-geo"
@@ -157,12 +157,12 @@ const CardComponent = ({
                   </svg>
                 </Button>
               )}
-            </Col>
-            <Col xs lg="2">
+          
+            
               {item.images && item.images.length > 0 ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="16"
+                  // width="16"
                   height="16"
                   fill="currentColor"
                   class="bi bi-images"
@@ -172,8 +172,8 @@ const CardComponent = ({
                   <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2M14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1M2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1z" />
                 </svg>
               ) : null}
-            </Col>
-            <Col>
+           
+           
               {item.reward === true && (
                 <div
                   onMouseEnter={handleMouseEnter}
@@ -195,7 +195,14 @@ const CardComponent = ({
                   )}
                 </div>
               )}
-            </Col>
+           
+           
+              {item.incidentType === "2" && (
+                <>
+                  <GiNinjaMask />
+                </>
+              )}
+            
           </Row>
         </Card.Footer>
         {/* Delete Confirmation Modal */}
