@@ -145,7 +145,7 @@ function MapWithPinpoints({incidentPosition}) {
     <>
       <MapContainer
         center={incidentPosition}
-        zoom={12}
+        zoom={13}
         style={{ height: "400px", width: "100%" }}
       >
         <TileLayer

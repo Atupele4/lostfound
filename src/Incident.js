@@ -13,7 +13,7 @@ const Incident = () => {
   const locationColors = {
     Park: "border-success",
   };
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -50,7 +50,7 @@ const Incident = () => {
           index={index}
           locationColors={locationColors}
           incidentDoc={incidentDoc}
-        />
+                  />
       ))}
     </div>
   );

@@ -26,7 +26,7 @@ const EnhancedCard = ({
   locationColors,
   incidentId,
   incidentDoc,
-}) => {
+  }) => {
   const { db } = useFirebase(); // Access Firestore
   const [uploadedImages, setUploadedImages] = useState([]);
   const [rating, setRating] = useState(null); // 'up' or 'down'
