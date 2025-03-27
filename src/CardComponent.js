@@ -203,8 +203,6 @@ const CardComponent = ({
                 </>
               )}
             
-
-            
           </Row>
         </Card.Footer>
         {/* Delete Confirmation Modal */}
