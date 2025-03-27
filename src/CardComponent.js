@@ -174,7 +174,7 @@ const CardComponent = ({
               ) : null} */}
            
            
-              {item.reward === true && (
+              {/* {item.reward === true && (
                 <div
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
@@ -194,7 +194,7 @@ const CardComponent = ({
                     </Toast>
                   )}
                 </div>
-              )}
+              )} */}
            
            
               {item.incidentType === "2" && (
