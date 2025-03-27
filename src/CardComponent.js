@@ -197,11 +197,13 @@ const CardComponent = ({
               )}
            
            
-              {/* {item.incidentType === "2" && (
+              {item.incidentType === "2" && (
                 <>
                   <GiNinjaMask />
                 </>
-              )} */}
+              )}
+            
+
             
           </Row>
         </Card.Footer>
